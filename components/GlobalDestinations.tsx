@@ -112,7 +112,7 @@ export default function GlobalDestinations() {
                       <p className="line-clamp-2">
                         {destination.description}
                       </p>
-                      <Link href="/destination-packages" className="btn w-full flex items-center justify-between bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition">
+                      <Link href="/search" className="btn w-full flex items-center justify-between bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition">
                         Book to {destination.title}
                         <MoveUpRight className="size-4" />
                       </Link>

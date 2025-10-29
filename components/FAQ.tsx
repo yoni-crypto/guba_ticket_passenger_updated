@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import { MoveUpRight } from 'lucide-react'
-import Link from 'next/link'
 
 interface FAQItem {
   id: number
@@ -44,10 +43,6 @@ export default function FAQ() {
           <p className="text-gray w-full max-w-153.5 lg:text-lg">
             Still have questions? Our customer support team is here to help you with your bus ticket booking.
           </p>
-          <Link href="/faqs" className="btn btn-primary flex items-center gap-2 w-fit">
-            View more
-            <MoveUpRight className="size-4" />
-          </Link>
         </div>
 
         <div className="w-full space-y-4 lg:max-w-175">

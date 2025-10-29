@@ -8,9 +8,10 @@ import { getTripDetails } from '@/lib/redux/features/tripSlice'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
 import { QRCodeSVG } from 'qrcode.react'
-import * as domToImage from 'dom-to-image-more'
 import { Download, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
+import jsPDF from 'jspdf'
+import domtoimage from 'dom-to-image-more'
 
 export default function TicketDetailPage() {
   const params = useParams()
@@ -24,54 +25,50 @@ export default function TicketDetailPage() {
   const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
-  if (ticketId) {
-    dispatch(fetchTicketDetail(ticketId))
-  }
-
-  return () => {
-    dispatch(clearTicketDetail())
-  }
-}, [dispatch, ticketId])
-
+    if (ticketId) {
+      dispatch(fetchTicketDetail(ticketId))
+    }
+    return () => {
+      dispatch(clearTicketDetail())
+    }
+  }, [dispatch, ticketId])
 
   useEffect(() => {
     if (ticketDetail) dispatch(getTripDetails(ticketDetail.booking.trip.tripGuid))
   }, [dispatch, ticketDetail])
 
-  // ✅ New improved download logic (dom-to-image-more)
-  const handleDownload = async () => {
-    if (!ticketRef.current) return toast.error('Ticket not found.')
+  const handleDownloadPDF = async () => {
+    const ticketElement = ticketRef.current
+    if (!ticketElement) {
+      toast.error('Ticket not found.')
+      return
+    }
 
     setDownloading(true)
     try {
-      await new Promise((r) => setTimeout(r, 300))
-      const node = ticketRef.current
-
-      // Ensure crisp export
       const scale = 2
-      const style = {
-        transform: 'scale(' + scale + ')',
-        transformOrigin: 'top left',
-        background: '#ffffff',
-      }
-
-      const dataUrl = await domToImage.toPng(node, {
+      const dataUrl = await domtoimage.toPng(ticketElement, {
         quality: 1,
-        width: node.offsetWidth * scale,
-        height: node.offsetHeight * scale,
-        style,
-        bgcolor: '#ffffff',
-        cacheBust: true,
-        useCORS: true,
+        width: ticketElement.clientWidth * scale,
+        height: ticketElement.clientHeight * scale,
+        style: {
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          width: `${ticketElement.clientWidth}px`,
+          height: `${ticketElement.clientHeight}px`,
+        },
       })
 
-      const link = document.createElement('a')
-      link.download = `ticket-${ticketDetail?.booking?.pnr || 'ticket'}.png`
-      link.href = dataUrl
-      link.click()
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgProps = pdf.getImageProperties(dataUrl)
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      pdf.save(`ticket-${ticketDetail?.booking?.pnr || 'ticket'}.pdf`)
+
       toast.success('🎟️ Ticket downloaded successfully!')
     } catch (error) {
-      console.error(error)
+      console.error('Download error:', error)
       toast.error('Failed to download ticket.')
     } finally {
       setDownloading(false)
@@ -134,7 +131,6 @@ export default function TicketDetailPage() {
   const isPaid = payment.status.toLowerCase() === 'paid'
   const qrData = `PNR:${pnr}|TICKET:${ticketDetail.ticketGuid}|TRIP:${trip.code}|DATE:${trip.departureDate}`
 
-  // Group seats by row
   const seatsByRow =
     tripDetails?.seatAvailability?.seats?.reduce((acc: any, seat: any) => {
       if (!acc[seat.rowNumber]) acc[seat.rowNumber] = []
@@ -164,6 +160,7 @@ export default function TicketDetailPage() {
             <div>
               <div
                 ref={ticketRef}
+                id="ticket-section"
                 className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-md relative"
                 style={{
                   backgroundImage: 'linear-gradient(135deg,#ffffff 70%,#f3f6ff 100%)',
@@ -174,9 +171,7 @@ export default function TicketDetailPage() {
                   <h1 className="text-2xl font-bold text-white">{trip.busCarrier.displayName}</h1>
                   <div
                     className={`px-4 py-1.5 rounded-full text-sm font-semibold ${
-                      isPaid
-                        ? 'bg-green-500 text-white'
-                        : 'bg-yellow-400 text-gray-900'
+                      isPaid ? 'bg-green-500 text-white' : 'bg-yellow-400 text-gray-900'
                     }`}
                   >
                     {payment.status}
@@ -264,7 +259,7 @@ export default function TicketDetailPage() {
               {isPaid && (
                 <div className="mt-6 flex justify-center">
                   <button
-                    onClick={handleDownload}
+                    onClick={handleDownloadPDF}
                     disabled={downloading}
                     className="flex items-center gap-2 px-8 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-medium"
                   >

@@ -190,24 +190,7 @@ function TicketCard({ tickets }: { tickets: any[] }) {
   const passengerCount = tickets.length
   const totalAmount = trip.travelPrice * passengerCount
   
-  // Parse the date string format "Tuesday, October 28, 2025"
-  const parseDepartureDate = (dateStr: string) => {
-    try {
-      const parts = dateStr.split(', ')
-      if (parts.length >= 2) {
-        return new Date(parts.slice(1).join(', '))
-      }
-      return new Date(dateStr)
-    } catch {
-      return new Date()
-    }
-  }
-  
-  const departureDate = parseDepartureDate(trip.departureDate)
-  departureDate.setHours(0, 0, 0, 0)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const isExpired = departureDate.getTime() < today.getTime()
+  const isExpired = firstTicket.status.toLowerCase() === 'expired'
   const isUnpaid = booking.payment.status.toLowerCase() !== 'paid'
   const showPayButton = !isExpired && isUnpaid
 
@@ -228,11 +211,11 @@ function TicketCard({ tickets }: { tickets: any[] }) {
             }`}>
               {firstTicket.status}
             </span>
-            {isUnpaid && (
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
-                {booking.payment.status}
-              </span>
-            )}
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+              booking.payment.status.toLowerCase() === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+            }`}>
+              {booking.payment.status}
+            </span>
           </div>
           <p className="text-gray-600">PNR: {booking.pnr}</p>
         </div>
@@ -304,24 +287,7 @@ function TicketCard({ tickets }: { tickets: any[] }) {
 function BookingCard({ booking }: { booking: any }) {
   const { trip } = booking
   
-  // Parse the date string format "Tuesday, October 28, 2025"
-  const parseDepartureDate = (dateStr: string) => {
-    try {
-      const parts = dateStr.split(', ')
-      if (parts.length >= 2) {
-        return new Date(parts.slice(1).join(', '))
-      }
-      return new Date(dateStr)
-    } catch {
-      return new Date()
-    }
-  }
-  
-  const departureDate = parseDepartureDate(trip.departureDate)
-  departureDate.setHours(0, 0, 0, 0)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const isExpired = departureDate.getTime() < today.getTime()
+  const isExpired = booking.tickets?.[0]?.status?.toLowerCase() === 'expired'
   const isUnpaid = booking.payment.status.toLowerCase() !== 'paid'
   const showPayButton = !isExpired && isUnpaid
 

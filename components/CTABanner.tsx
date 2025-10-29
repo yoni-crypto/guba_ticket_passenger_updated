@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function CTABanner() {
   return (
-    <div className="relative bg-[url('/cta-banner.jpg')] bg-cover bg-center bg-no-repeat py-16 lg:py-47.5">
+    <div className="relative bg-[url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1169')] bg-cover bg-center bg-no-repeat py-16 lg:py-47.5">
       <span className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/60 to-black/40"></span>
       <div className="relative container mx-auto px-4 text-center text-white">
         <div className="mb-8 space-y-4 lg:mb-12">

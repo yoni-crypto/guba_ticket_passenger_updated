@@ -34,6 +34,14 @@ const switzer = localFont({
 export const metadata: Metadata = {
   title: "GubaBus - Book Your Bus Journey",
   description: "Book bus tickets online with ease. Find the best routes, compare prices, and travel comfortably across Ethiopia.",
+  icons: {
+    icon: [
+      { url: '/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon_io/favicon.ico' }
+    ],
+    apple: '/favicon_io/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({

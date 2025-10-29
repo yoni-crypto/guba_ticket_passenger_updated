@@ -120,20 +120,14 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                   Phone Number
                 </label>
                 <div className="flex">
-                  <select
-                    value={loginForm.countryCode}
-                    onChange={(e) => setLoginForm({...loginForm, countryCode: e.target.value})}
-                    className="px-3 py-3 border border-gray-300 rounded-l-lg bg-gray-50"
-                  >
-                    <option value="+251">+251</option>
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                  </select>
+                  <div className="px-3 py-3 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-700">
+                    +251
+                  </div>
                   <input
                     type="tel"
                     value={loginForm.mobileNumber}
                     onChange={(e) => setLoginForm({...loginForm, mobileNumber: e.target.value})}
-                    className="flex-1 px-4 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                     placeholder="Enter phone number"
                     required
                   />
@@ -149,7 +143,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                     type={showPassword ? 'text' : 'password'}
                     value={loginForm.password}
                     onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                     placeholder="Enter password"
                     required
                   />
@@ -166,7 +160,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-blue text-white py-3 px-4 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>
@@ -182,7 +176,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                     type="text"
                     value={registerForm.firstName}
                     onChange={(e) => setRegisterForm({...registerForm, firstName: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                     placeholder="First name"
                     required
                   />
@@ -195,7 +189,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                     type="text"
                     value={registerForm.lastName}
                     onChange={(e) => setRegisterForm({...registerForm, lastName: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                     placeholder="Last name"
                     required
                   />
@@ -207,20 +201,14 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                   Phone Number
                 </label>
                 <div className="flex">
-                  <select
-                    value={registerForm.countryCode}
-                    onChange={(e) => setRegisterForm({...registerForm, countryCode: e.target.value})}
-                    className="px-3 py-3 border border-gray-300 rounded-l-lg bg-gray-50"
-                  >
-                    <option value="+251">+251</option>
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                  </select>
+                  <div className="px-3 py-3 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-700">
+                    +251
+                  </div>
                   <input
                     type="tel"
                     value={registerForm.mobileNumber}
                     onChange={(e) => setRegisterForm({...registerForm, mobileNumber: e.target.value})}
-                    className="flex-1 px-4 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                     placeholder="Enter phone number"
                     required
                   />
@@ -235,7 +223,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                   type="email"
                   value={registerForm.email}
                   onChange={(e) => setRegisterForm({...registerForm, email: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                   placeholder="Enter email"
                 />
               </div>
@@ -247,7 +235,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                 <select
                   value={registerForm.gender}
                   onChange={(e) => setRegisterForm({...registerForm, gender: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -263,7 +251,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
                     type={showPassword ? 'text' : 'password'}
                     value={registerForm.password}
                     onChange={(e) => setRegisterForm({...registerForm, password: e.target.value})}
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
                     placeholder="Enter password"
                     required
                   />
@@ -280,7 +268,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full bg-blue text-white py-3 px-4 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
