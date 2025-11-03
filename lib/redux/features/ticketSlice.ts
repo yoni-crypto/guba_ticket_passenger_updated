@@ -93,6 +93,22 @@ interface Pagination {
   totalPages: number
 }
 
+interface BookingDetail {
+  bookingGuid: string
+  pnr: string
+  status: string
+  lastModified: string
+  payment: Payment
+  trip: Trip
+  tickets: {
+    ticketGuid: string
+    fullName: string
+    phoneNumber: string
+    email: string
+    ticketNumber: string
+  }[]
+}
+
 interface TicketDetail {
   ticketGuid: string
   fullName: string
@@ -106,6 +122,7 @@ interface TicketDetail {
 
 interface TicketState {
   tickets: Ticket[]
+  bookings: Booking[]
   pagination: Pagination | null
   loading: boolean
   error: string | null
@@ -114,6 +131,7 @@ interface TicketState {
   searchLoading: boolean
   searchError: string | null
   ticketDetail: TicketDetail | null
+  bookingDetail: BookingDetail | null
   detailLoading: boolean
   detailError: string | null
   seatConfirming: boolean
@@ -122,6 +140,7 @@ interface TicketState {
 
 const initialState: TicketState = {
   tickets: [],
+  bookings: [],
   pagination: null,
   loading: false,
   error: null,
@@ -130,25 +149,59 @@ const initialState: TicketState = {
   searchLoading: false,
   searchError: null,
   ticketDetail: null,
+  bookingDetail: null,
   detailLoading: false,
   detailError: null,
   seatConfirming: false,
   seatConfirmError: null,
 }
 
-export const fetchTickets = createAsyncThunk(
-  'ticket/fetchTickets',
-  async ({ pageNumber = 1, pageSize = 8, status = '' }: { 
+// Old endpoint - commented out
+// export const fetchTickets = createAsyncThunk(
+//   'ticket/fetchTickets',
+//   async ({ pageNumber = 1, pageSize = 8, status = '' }: { 
+//     pageNumber?: number
+//     pageSize?: number
+//     status?: string
+//   }, { getState }) => {
+//     const state = getState() as { auth: { token: string } }
+//     const token = state.auth.token
+//     
+//     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/passenger/trip/ticket/list?PageNumber=${pageNumber}&PageSize=${pageSize}`
+//     if (status) {
+//       url += `&status=${status}`
+//     }
+//     
+//     const response = await fetch(url, {
+//       headers: {
+//         'Authorization': `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//     })
+//     const data = await response.json()
+//     if (!response.ok) throw new Error(data.message)
+//     return data.data
+//   }
+// )
+
+// New booking list endpoint
+export const fetchBookings = createAsyncThunk(
+  'ticket/fetchBookings',
+  async ({ pageNumber = 1, pageSize = 10, status = '', searchKeyword = '' }: { 
     pageNumber?: number
     pageSize?: number
     status?: string
+    searchKeyword?: string
   }, { getState }) => {
     const state = getState() as { auth: { token: string } }
     const token = state.auth.token
     
-    let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/passenger/trip/ticket/list?PageNumber=${pageNumber}&PageSize=${pageSize}`
+    let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/passenger/trip/booking/list?PageNumber=${pageNumber}&PageSize=${pageSize}`
     if (status) {
       url += `&status=${status}`
+    }
+    if (searchKeyword) {
+      url += `&searchKeyword=${searchKeyword}`
     }
     
     const response = await fetch(url, {
@@ -162,6 +215,8 @@ export const fetchTickets = createAsyncThunk(
     return data.data
   }
 )
+
+export const fetchTickets = fetchBookings
 
 export const searchTicketByPNR = createAsyncThunk(
   'ticket/searchByPNR',
@@ -183,13 +238,35 @@ export const searchTicketByPNR = createAsyncThunk(
   }
 )
 
-export const fetchTicketDetail = createAsyncThunk(
-  'ticket/fetchDetail',
-  async (ticketGuid: string, { getState }) => {
+// Old endpoint - commented out
+// export const fetchTicketDetail = createAsyncThunk(
+//   'ticket/fetchDetail',
+//   async (ticketGuid: string, { getState }) => {
+//     const state = getState() as { auth: { token: string } }
+//     const token = state.auth.token
+//     
+//     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/passenger/trip/ticket/details?id=${ticketGuid}`
+//     
+//     const response = await fetch(url, {
+//       headers: {
+//         'Authorization': `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//     })
+//     const data = await response.json()
+//     if (!response.ok) throw new Error(data.message)
+//     return data.data.ticket
+//   }
+// )
+
+// New booking detail endpoint
+export const fetchBookingDetail = createAsyncThunk(
+  'ticket/fetchBookingDetail',
+  async (bookingGuid: string, { getState }) => {
     const state = getState() as { auth: { token: string } }
     const token = state.auth.token
     
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/passenger/trip/ticket/details?id=${ticketGuid}`
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/passenger/trip/booking/ticket/list?id=${bookingGuid}`
     
     const response = await fetch(url, {
       headers: {
@@ -198,10 +275,12 @@ export const fetchTicketDetail = createAsyncThunk(
       },
     })
     const data = await response.json()
-    if (!response.ok) throw new Error(data.message)
-    return data.data.ticket
+    if (!response.ok) throw new Error(data.message || 'Failed to fetch booking details')
+    return data.data.trip
   }
 )
+
+export const fetchTicketDetail = fetchBookingDetail
 
 export const confirmSeat = createAsyncThunk(
   'ticket/confirmSeat',
@@ -246,18 +325,18 @@ export const ticketSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTickets.pending, (state) => {
+      .addCase(fetchBookings.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(fetchTickets.fulfilled, (state, action) => {
+      .addCase(fetchBookings.fulfilled, (state, action) => {
         state.loading = false
-        state.tickets = action.payload.tickets
+        state.bookings = action.payload.bookings
         state.pagination = action.payload.pagination
       })
-      .addCase(fetchTickets.rejected, (state, action) => {
+      .addCase(fetchBookings.rejected, (state, action) => {
         state.loading = false
-        state.error = action.error.message || 'Failed to fetch tickets'
+        state.error = action.error.message || 'Failed to fetch bookings'
       })
       .addCase(searchTicketByPNR.pending, (state) => {
         state.searchLoading = true
@@ -272,17 +351,17 @@ export const ticketSlice = createSlice({
         state.searchLoading = false
         state.searchError = action.error.message || 'Failed to search ticket'
       })
-      .addCase(fetchTicketDetail.pending, (state) => {
+      .addCase(fetchBookingDetail.pending, (state) => {
         state.detailLoading = true
         state.detailError = null
       })
-      .addCase(fetchTicketDetail.fulfilled, (state, action) => {
+      .addCase(fetchBookingDetail.fulfilled, (state, action) => {
         state.detailLoading = false
-        state.ticketDetail = action.payload
+        state.bookingDetail = action.payload
       })
-      .addCase(fetchTicketDetail.rejected, (state, action) => {
+      .addCase(fetchBookingDetail.rejected, (state, action) => {
         state.detailLoading = false
-        state.detailError = action.error.message || 'Failed to fetch ticket details'
+        state.detailError = action.error.message || 'Failed to fetch booking details'
       })
       .addCase(confirmSeat.pending, (state) => {
         state.seatConfirming = true

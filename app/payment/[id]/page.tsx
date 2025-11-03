@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { fetchPaymentOptions, processPayment, clearPaymentResponse } from '@/lib/redux/features/paymentSlice'
-import { fetchTickets } from '@/lib/redux/features/ticketSlice'
+import { fetchBookings } from '@/lib/redux/features/ticketSlice'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
 import { CreditCard, Wallet, ArrowLeft } from 'lucide-react'
@@ -16,27 +16,27 @@ export default function PaymentPage() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
   const { paymentOptions, loading, paymentLoading, paymentError, paymentResponse } = useAppSelector((state) => state.payment)
-  const { tickets } = useAppSelector((state) => state.ticket)
+  const { bookings } = useAppSelector((state) => state.ticket)
   const paymentGuid = params.id as string
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [ticketInfo, setTicketInfo] = useState<any>(null)
 
   useEffect(() => {
     dispatch(fetchPaymentOptions({ pageNumber: 1, pageSize: 10 }))
-    dispatch(fetchTickets({ pageNumber: 1, pageSize: 100 }))
+    dispatch(fetchBookings({ pageNumber: 1, pageSize: 100 }))
     return () => {
       dispatch(clearPaymentResponse())
     }
   }, [dispatch])
 
   useEffect(() => {
-    if (tickets.length > 0) {
-      const groupedTickets = tickets.filter((t) => t.booking.payment.paymentGuid === paymentGuid)
-      if (groupedTickets.length > 0) {
-        setTicketInfo(groupedTickets)
+    if (bookings.length > 0) {
+      const matchingBooking = bookings.find((b) => b.payment.paymentGuid === paymentGuid)
+      if (matchingBooking) {
+        setTicketInfo(matchingBooking)
       }
     }
-  }, [tickets, paymentGuid])
+  }, [bookings, paymentGuid])
 
   useEffect(() => {
     if (paymentResponse) {
@@ -74,8 +74,7 @@ export default function PaymentPage() {
       return
     }
 
-    const firstTicket = ticketInfo[0]
-    const totalAmount = firstTicket.booking.trip.travelPrice * ticketInfo.length
+    const totalAmount = ticketInfo.trip.travelPrice * ticketInfo.tickets.length
 
     const result = await dispatch(
       processPayment({
@@ -110,9 +109,8 @@ export default function PaymentPage() {
     )
   }
 
-  const firstTicket = ticketInfo[0]
-  const totalAmount = firstTicket.booking.trip.travelPrice * ticketInfo.length
-  const passengerCount = ticketInfo.length
+  const totalAmount = ticketInfo.trip.travelPrice * ticketInfo.tickets.length
+  const passengerCount = ticketInfo.tickets.length
 
   return (
     <>
@@ -135,7 +133,7 @@ export default function PaymentPage() {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p className="text-sm text-gray-600">Trip</p>
-                  <p className="font-semibold text-black">{firstTicket.booking.trip.busCarrier.displayName}</p>
+                  <p className="font-semibold text-black">{ticketInfo.trip.busCarrier.displayName}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">Passengers</p>
@@ -145,7 +143,7 @@ export default function PaymentPage() {
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">Passenger Names:</p>
                 <div className="flex flex-wrap gap-2">
-                  {ticketInfo.map((ticket: any) => (
+                  {ticketInfo.tickets.map((ticket: any) => (
                     <span key={ticket.ticketGuid} className="px-3 py-1 bg-white rounded-lg text-sm font-medium text-black">
                       {ticket.fullName}
                     </span>
@@ -155,7 +153,7 @@ export default function PaymentPage() {
               <div className="pt-4 border-t-2 border-blue-200">
                 <div className="flex justify-between items-center">
                   <p className="text-lg font-semibold text-black">Total Amount</p>
-                  <p className="text-3xl font-bold text-blue-500">{firstTicket.booking.trip.currency.symbol}{totalAmount}</p>
+                  <p className="text-3xl font-bold text-blue-500">{ticketInfo.trip.currency.symbol}{totalAmount}</p>
                 </div>
               </div>
             </div>
@@ -215,7 +213,7 @@ export default function PaymentPage() {
               disabled={!selectedOption || paymentLoading}
               className="w-full py-4 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg transition-colors"
             >
-              {paymentLoading ? 'Processing...' : `Pay ${firstTicket.booking.trip.currency.symbol}${totalAmount}`}
+              {paymentLoading ? 'Processing...' : `Pay ${ticketInfo.trip.currency.symbol}${totalAmount}`}
             </button>
 
             <p className="text-center text-sm text-gray-500 mt-4">

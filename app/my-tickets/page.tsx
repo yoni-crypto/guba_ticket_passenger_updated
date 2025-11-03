@@ -2,22 +2,23 @@
 
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
-import { fetchTickets, searchTicketByPNR, clearSearchResults } from '@/lib/redux/features/ticketSlice'
+import { fetchBookings, searchTicketByPNR, clearSearchResults } from '@/lib/redux/features/ticketSlice'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
+import AuthModal from '@/components/AuthModal'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 
 export default function MyTickets() {
   const dispatch = useAppDispatch()
   const { user, token } = useAppSelector((state) => state.auth)
-  const { tickets, loading, pagination, searchResults, searchLoading, searchError } = useAppSelector((state) => state.ticket)
+  const { bookings, loading, pagination, searchResults, searchLoading, searchError } = useAppSelector((state) => state.ticket)
   const [pnrQuery, setPnrQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
 
   useEffect(() => {
     if (token && user) {
-      dispatch(fetchTickets({ pageNumber: 1, pageSize: 10, status: statusFilter }))
+      dispatch(fetchBookings({ pageNumber: 1, pageSize: 10, status: statusFilter }))
     }
   }, [dispatch, token, user, statusFilter])
 
@@ -115,12 +116,16 @@ export default function MyTickets() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue bg-white"
             >
-              <option value="">All Status</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="">All tickets</option>
               <option value="PENDING">Pending</option>
+              <option value="CANCELLED">Cancelled</option>
+              <option value="EXPIRED">Expired</option>
+              <option value="BOOKED">Booked</option>
+              <option value="READY">Ready</option>
+              <option value="BOARDED">Boarded</option>
+              <option value="NOSHOW">NoShow</option>
             </select>
           </div>
 
@@ -129,7 +134,7 @@ export default function MyTickets() {
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
               <p className="mt-4 text-gray-600">Loading tickets...</p>
             </div>
-          ) : tickets.length === 0 ? (
+          ) : bookings.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 mb-4">
                 <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,18 +148,9 @@ export default function MyTickets() {
               </a>
             </div>
           ) : (
-            <div className="space-y-4">
-              {Object.entries(
-                tickets.reduce((acc: any, ticket) => {
-                  const pnr = ticket.booking.pnr
-                  if (!acc[pnr]) {
-                    acc[pnr] = []
-                  }
-                  acc[pnr].push(ticket)
-                  return acc
-                }, {})
-              ).map(([pnr, groupedTickets]: [string, any]) => (
-                <TicketCard key={pnr} tickets={groupedTickets} />
+            <div className="grid gap-6">
+              {bookings.map((booking) => (
+                <BookingCard key={booking.bookingGuid} booking={booking} />
               ))}
             </div>
           )}
@@ -164,7 +160,7 @@ export default function MyTickets() {
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
-                  onClick={() => dispatch(fetchTickets({ pageNumber: page, pageSize: 10, status: statusFilter }))}
+                  onClick={() => dispatch(fetchBookings({ pageNumber: page, pageSize: 10, status: statusFilter }))}
                   className={`px-4 py-2 rounded-lg font-medium ${
                     page === pagination.currentPage
                       ? 'bg-blue-500 text-white'
@@ -183,197 +179,178 @@ export default function MyTickets() {
   )
 }
 
-function TicketCard({ tickets }: { tickets: any[] }) {
-  const firstTicket = tickets[0]
-  const { booking } = firstTicket
+
+
+function BookingCard({ booking }: { booking: any }) {
   const { trip } = booking
-  const passengerCount = tickets.length
-  const totalAmount = trip.travelPrice * passengerCount
+  const totalAmount = trip.travelPrice * booking.tickets.length
+  const { isAuthenticated } = useAppSelector((state) => state.auth)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   
-  const isExpired = firstTicket.status.toLowerCase() === 'expired'
+  const isExpired = booking.status?.toLowerCase() === 'expired'
   const isUnpaid = booking.payment.status.toLowerCase() !== 'paid'
   const showPayButton = !isExpired && isUnpaid
+  const [timeLeft, setTimeLeft] = useState<string>('')
 
   const handlePayNow = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true)
+      return
+    }
     window.location.href = `/payment/${booking.payment.paymentGuid}`
   }
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
+  // Calculate expiry time (5 minutes from booking creation)
+  useEffect(() => {
+    if (!isUnpaid || isExpired) return
+
+    const bookingTime = new Date(booking.createdAt || Date.now())
+    const expiryTime = new Date(bookingTime.getTime() + 5 * 60 * 1000) // 5 minutes
+
+    const timer = setInterval(() => {
+      const now = new Date()
+      const diff = expiryTime.getTime() - now.getTime()
+
+      if (diff <= 0) {
+        setTimeLeft('Expired')
+        clearInterval(timer)
+        return
+      }
+
+      const minutes = Math.floor(diff / (1000 * 60))
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+      setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [isUnpaid, isExpired, booking.createdAt])
+
   return (
-    <div className="border-2 border-gray-200 rounded-2xl p-6 hover:border-blue-300 transition-colors">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-xl font-bold text-black">{trip.busCarrier.displayName}</h3>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-              firstTicket.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
-              firstTicket.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
-              'bg-yellow-100 text-yellow-700'
-            }`}>
-              {firstTicket.status}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-              booking.payment.status.toLowerCase() === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
-            }`}>
-              {booking.payment.status}
-            </span>
+    <div className="bg-white border border-gray-200 hover:border-gray-300 transition-colors">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
+              {trip.busCarrier.displayName.charAt(0)}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">{trip.busCarrier.displayName}</h3>
+              <p className="text-sm text-gray-500 font-mono">{booking.pnr}</p>
+            </div>
           </div>
-          <p className="text-gray-600">PNR: {booking.pnr}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-blue-500">{trip.currency.symbol}{totalAmount}</p>
-          <p className="text-sm text-gray-600">{passengerCount} {passengerCount > 1 ? 'Passengers' : 'Passenger'}</p>
+          <div className="text-right">
+            <p className="text-2xl font-bold text-gray-900">{trip.currency.symbol}{totalAmount.toLocaleString()}</p>
+            <p className="text-sm text-gray-500">{booking.tickets.length} {booking.tickets.length === 1 ? 'passenger' : 'passengers'}</p>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
-          <p className="text-sm text-gray-600 mb-1">From</p>
-          <p className="font-semibold text-black">{trip.tripRoute.origin.name}</p>
-          <p className="text-sm text-gray-600">{trip.tripRoute.origin.city.name}</p>
-        </div>
-        <div className="flex items-center justify-center">
-          <div className="text-center">
-            <svg className="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-            <p className="text-sm text-gray-600">{trip.tripRoute.estimatedTravelTime}</p>
+      {/* Route */}
+      <div className="px-6 py-5">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">From</p>
+            <p className="text-lg font-semibold text-gray-900">{trip.tripRoute.origin.city.name}</p>
+            <p className="text-sm text-gray-600">{trip.tripRoute.origin.name}</p>
           </div>
-        </div>
-        <div className="text-right md:text-left">
-          <p className="text-sm text-gray-600 mb-1">To</p>
-          <p className="font-semibold text-black">{trip.tripRoute.destination.name}</p>
-          <p className="text-sm text-gray-600">{trip.tripRoute.destination.city.name}</p>
+          
+          <div className="flex-1 flex flex-col items-center px-4">
+            <div className="flex items-center w-full">
+              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+              <div className="flex-1 h-0.5 bg-gray-200 mx-3 relative">
+                <div className="absolute inset-0 bg-blue-600 w-1/2"></div>
+              </div>
+              <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">{trip.tripRoute.estimatedTravelTime}</p>
+          </div>
+          
+          <div className="flex-1 text-right">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">To</p>
+            <p className="text-lg font-semibold text-gray-900">{trip.tripRoute.destination.city.name}</p>
+            <p className="text-sm text-gray-600">{trip.tripRoute.destination.name}</p>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-between items-center gap-4 pt-4 border-t-2 border-gray-100">
-        <div className="flex flex-wrap gap-4">
+      {/* Details */}
+      <div className="px-6 py-4 bg-gray-50">
+        <div className="grid grid-cols-3 gap-6">
           <div>
-            <p className="text-sm text-gray-600">Passengers</p>
-            <p className="font-medium text-black">{tickets.map(t => t.fullName).join(', ')}</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Departure</p>
+            <p className="text-sm font-semibold text-gray-900">{formatDate(trip.departureDate)}</p>
+            <p className="text-sm text-gray-600">{trip.departureTime}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Departure</p>
-            <p className="font-medium text-black">
-              {trip.departureDate} at {trip.departureTime}
-            </p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Passenger</p>
+            <p className="text-sm font-semibold text-gray-900">{booking.tickets[0]?.fullName}</p>
+            {booking.tickets.length > 1 && (
+              <p className="text-sm text-gray-600">+{booking.tickets.length - 1} more</p>
+            )}
           </div>
           <div>
-            <p className="text-sm text-gray-600">Contact</p>
-            <p className="font-medium text-black">{firstTicket.phoneNumber}</p>
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Contact</p>
+            <p className="text-sm font-semibold text-gray-900">{booking.tickets[0]?.phoneNumber}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+      </div>
+
+      {/* Status & Actions */}
+      <div className="px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <span className={`inline-flex items-center px-3 py-1 text-sm font-semibold ${
+            booking.status === 'BOOKED' ? 'bg-green-100 text-green-800' :
+            booking.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+            booking.status === 'EXPIRED' ? 'bg-gray-100 text-gray-800' :
+            'bg-yellow-100 text-yellow-800'
+          }`}>
+            {booking.status}
+          </span>
+          <span className={`inline-flex items-center px-3 py-1 text-sm font-semibold ${
+            booking.payment.status.toLowerCase() === 'paid' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-red-100 text-red-800'
+          }`}>
+            {booking.payment.status.toLowerCase() === 'paid' ? 'Payment Completed' : 'Payment Pending'}
+          </span>
+          {isUnpaid && !isExpired && timeLeft && (
+            <span className="inline-flex items-center px-3 py-1 text-sm font-semibold bg-orange-100 text-orange-800">
+              {timeLeft === 'Expired' ? 'Payment Expired' : `Pay within ${timeLeft}`}
+            </span>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-3">
           <a
-            href={`/ticket/${firstTicket.ticketGuid}`}
-            className="px-6 py-2 border-2 border-blue-500 text-blue-500 rounded-xl hover:bg-blue-50 font-medium transition-colors"
+            href={`/ticket/${booking.bookingGuid}`}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             View Details
           </a>
           {showPayButton && (
             <button
               onClick={handlePayNow}
-              className="px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-medium transition-colors"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Pay Now
             </button>
           )}
         </div>
       </div>
-    </div>
-  )
-}
-
-function BookingCard({ booking }: { booking: any }) {
-  const { trip } = booking
-  
-  const isExpired = booking.tickets?.[0]?.status?.toLowerCase() === 'expired'
-  const isUnpaid = booking.payment.status.toLowerCase() !== 'paid'
-  const showPayButton = !isExpired && isUnpaid
-
-  const handlePayNow = () => {
-    window.location.href = `/payment/${booking.payment.paymentGuid}`
-  }
-
-  return (
-    <div className="border-2 border-gray-200 rounded-2xl p-6">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-xl font-bold text-black">{trip.busCarrier.displayName}</h3>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-              booking.payment.status === 'PAID' ? 'bg-green-100 text-green-700' :
-              booking.payment.status === 'FAILED' ? 'bg-red-100 text-red-700' :
-              'bg-yellow-100 text-yellow-700'
-            }`}>
-              {booking.payment.status}
-            </span>
-          </div>
-          <p className="text-gray-600">PNR: {booking.pnr}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-blue-500">{trip.currency.symbol}{trip.travelPrice}</p>
-          <p className="text-sm text-gray-600">{booking.tickets?.length || 0} Ticket(s)</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
-          <p className="text-sm text-gray-600 mb-1">From</p>
-          <p className="font-semibold text-black">{trip.tripRoute.origin.name}</p>
-          <p className="text-sm text-gray-600">{trip.tripRoute.origin.city.name}</p>
-        </div>
-        <div className="flex items-center justify-center">
-          <div className="text-center">
-            <svg className="w-6 h-6 mx-auto text-gray-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-            <p className="text-sm text-gray-600">{trip.tripRoute.estimatedTravelTime}</p>
-          </div>
-        </div>
-        <div className="text-right md:text-left">
-          <p className="text-sm text-gray-600 mb-1">To</p>
-          <p className="font-semibold text-black">{trip.tripRoute.destination.name}</p>
-          <p className="text-sm text-gray-600">{trip.tripRoute.destination.city.name}</p>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap justify-between items-center gap-4 pt-4 border-t-2 border-gray-100">
-        <div className="flex flex-wrap gap-4">
-          <div>
-            <p className="text-sm text-gray-600">Departure</p>
-            <p className="font-medium text-black">
-              {trip.departureDate} at {trip.departureTime}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-600">Bus</p>
-            <p className="font-medium text-black">{trip.bus.plateNumber}</p>
-          </div>
-        </div>
-        {showPayButton && (
-          <button
-            onClick={handlePayNow}
-            className="px-6 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-medium transition-colors"
-          >
-            Pay Now
-          </button>
-        )}
-      </div>
-
-      {booking.tickets && booking.tickets.length > 0 && (
-        <div className="mt-4 pt-4 border-t-2 border-gray-100">
-          <p className="text-sm font-semibold text-black mb-2">Passengers:</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {booking.tickets.map((ticket: any) => (
-              <div key={ticket.ticketGuid} className="text-sm">
-                <span className="font-medium text-black">{ticket.name}</span>
-                <span className="text-gray-600"> - {ticket.ticketNumber}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </div>
   )
 }

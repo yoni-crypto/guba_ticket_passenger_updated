@@ -21,6 +21,7 @@
     "framer-motion": "^11.11.17",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.12.1",
+    "jsbarcode": "^3.12.1",
     "jspdf": "^3.0.3",
     "lottie-react": "^2.4.0",
     "lucide-react": "^0.548.0",

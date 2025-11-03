@@ -41,7 +41,7 @@ export default function GlobalDestinations() {
       routes: '5+ Daily Routes'
     },
     {
-      image: 'https://addisfortune.news/wp-content/uploads/2019/06/hawassa-ethiopia.jpg',
+      image: 'https://media.istockphoto.com/id/186914973/photo/obelisk-in-the-aksum-kingdom-ethiopia.jpg?s=612x612&w=0&k=20&c=xcINJxnz71uvfROg0uby9QrRlyNeQesLkWr5JLnXmGE=',
       title: 'Hawwasa',
       description: 'Coffee capital with frequent bus connections through scenic landscapes.',
       routes: '10+ Daily Routes'

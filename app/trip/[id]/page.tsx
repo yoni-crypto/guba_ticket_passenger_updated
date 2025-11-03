@@ -159,31 +159,26 @@ export default function TripDetailsPage() {
     <>
       <NavBar />
       <div className="min-h-screen bg-white font-switzer">
-        {/* Hero Section */}
-        <div className="bg-blue text-white pt-28 pb-16">
+        {/* Header */}
+        <div className="bg-blue text-white pt-28 pb-8">
           <div className="container mx-auto px-4">
             <button 
               onClick={() => router.back()}
-              className="flex items-center gap-2 text-white hover:text-white/80 mb-6 transition"
+              className="flex items-center gap-2 text-white hover:text-white/80 mb-4"
             >
               <ArrowLeft className="size-5" />
-              <span className="font-medium">Back to Search</span>
+              <span>Back to Search</span>
             </button>
 
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div className="flex items-center gap-6">
-                <div className="grid size-20 place-content-center rounded-2xl bg-white/20 backdrop-blur-sm">
-                  <Bus className="size-10" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-semibold mb-1 lg:text-4xl">
-                    {tripDetails.busCarrier.displayName}
-                  </h1>
-                  <p className="text-white/80">{tripDetails.bus.plateNumber}</p>
-                </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-bold mb-1">
+                  {tripDetails.busCarrier.displayName}
+                </h1>
+                <p className="text-white/80">{tripDetails.bus.plateNumber}</p>
               </div>
               <div className="text-right">
-                <p className="text-4xl font-bold">{tripDetails.currency.symbol}{tripDetails.travelPrice}</p>
+                <p className="text-2xl font-bold">{tripDetails.currency.symbol}{tripDetails.travelPrice}</p>
                 <p className="text-white/70 text-sm">per person</p>
               </div>
             </div>
@@ -193,23 +188,23 @@ export default function TripDetailsPage() {
         {/* Content */}
         <div className="container mx-auto px-4 -mt-6 pb-20">
           {/* Tabs */}
-          <div className="flex gap-1 mb-8 bg-white/20 backdrop-blur-sm rounded-xl p-1">
+          <div className="flex gap-1 mb-6 bg-white border border-gray-200">
             <button
               onClick={() => setActiveTab('details')}
-              className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all ${
+              className={`flex-1 py-3 px-4 font-medium ${
                 activeTab === 'details'
-                  ? 'bg-white text-blue shadow-sm'
-                  : 'text-white hover:bg-white/10'
+                  ? 'bg-blue text-white'
+                  : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
               Trip Details
             </button>
             <button
               onClick={() => setActiveTab('booking')}
-              className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all ${
+              className={`flex-1 py-3 px-4 font-medium ${
                 activeTab === 'booking'
-                  ? 'bg-white text-blue shadow-sm'
-                  : 'text-white hover:bg-white/10'
+                  ? 'bg-blue text-white'
+                  : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
               Book Tickets ({passengers.length})
@@ -217,42 +212,37 @@ export default function TripDetailsPage() {
           </div>
 
           {activeTab === 'details' ? (
-          <div className="grid lg:grid-cols-3 gap-10">
+          <div className="grid lg:grid-cols-3 gap-6">
             
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-6">
               {/* Route Details */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-6">
+              <div className="border border-gray-200 bg-white p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-semibold text-black">Route Details</h2>
-                  <span className="text-sm bg-blue/10 text-blue rounded-full px-4 py-1">
+                  <h2 className="text-lg font-bold">Route Details</h2>
+                  <span className="text-sm bg-gray-100 px-3 py-1">
                     {tripDetails.tripRoute.estimatedTravelTime}
                   </span>
                 </div>
 
-                <div className="space-y-10">
+                <div className="space-y-6">
                   {/* Departure */}
-                  <div className="flex items-start gap-5">
-                    <div className="flex flex-col items-center">
-                      <div className="size-4 bg-green-600 rounded-full"></div>
-                      <div className="w-0.5 h-20 bg-gray-200 mt-2"></div>
-                    </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-3 h-3 bg-green-600 rounded-full mt-1"></div>
                     <div>
-                      <p className="text-sm text-green-600 font-medium">DEPARTURE</p>
-                      <h3 className="text-xl font-semibold text-black">{tripDetails.tripRoute.origin.name}</h3>
+                      <p className="text-sm text-green-600 font-medium">FROM</p>
+                      <h3 className="text-lg font-bold">{tripDetails.tripRoute.origin.name}</h3>
                       <p className="text-gray-600">{tripDetails.tripRoute.origin.region?.name}</p>
                       <p className="text-sm text-gray-500">{tripDetails.tripRoute.origin.address}</p>
                     </div>
                   </div>
 
                   {/* Arrival */}
-                  <div className="flex items-start gap-5">
-                    <div className="flex flex-col items-center">
-                      <div className="size-4 bg-red-600 rounded-full"></div>
-                    </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-3 h-3 bg-red-600 rounded-full mt-1"></div>
                     <div>
-                      <p className="text-sm text-red-600 font-medium">ARRIVAL</p>
-                      <h3 className="text-xl font-semibold text-black">{tripDetails.tripRoute.destination.name}</h3>
+                      <p className="text-sm text-red-600 font-medium">TO</p>
+                      <h3 className="text-lg font-bold">{tripDetails.tripRoute.destination.name}</h3>
                       <p className="text-gray-600">{tripDetails.tripRoute.destination.region?.name}</p>
                       <p className="text-sm text-gray-500">{tripDetails.tripRoute.destination.address}</p>
                     </div>
@@ -261,40 +251,40 @@ export default function TripDetailsPage() {
               </div>
 
               {/* Trip Info */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-6">
-                <h2 className="text-2xl font-semibold text-black mb-4">Trip Information</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="border border-gray-200 bg-white p-4">
+                <h2 className="text-lg font-bold mb-4">Trip Information</h2>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">DEPARTURE DATE</p>
-                    <p className="text-lg font-semibold text-black">{tripDetails.departureDate}</p>
+                    <p className="text-sm text-gray-600">Departure Date</p>
+                    <p className="font-bold">{tripDetails.departureDate}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 font-medium">AVAILABLE SEATS</p>
-                    <p className="text-lg font-semibold text-green-600">{tripDetails.seatAvailability.availableSeats} seats</p>
+                    <p className="text-sm text-gray-600">Available Seats</p>
+                    <p className="font-bold text-green-600">{tripDetails.seatAvailability.availableSeats} seats</p>
                   </div>
                 </div>
               </div>
 
               {/* Amenities */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-6">
-                <h2 className="text-2xl font-semibold text-black mb-4">Bus Amenities</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="border border-gray-200 bg-white p-4">
+                <h2 className="text-lg font-bold mb-4">Bus Amenities</h2>
+                <div className="grid grid-cols-3 gap-3">
                   {tripDetails.bus.amenities.hasWifi && (
-                    <div className="flex items-center gap-4 p-3 rounded-xl border border-gray-200">
-                      <Wifi className="size-5 text-blue" />
-                      <span className="font-medium text-black">Free WiFi</span>
+                    <div className="flex items-center gap-2 p-2 border border-gray-200">
+                      <Wifi className="size-4 text-blue" />
+                      <span className="text-sm">WiFi</span>
                     </div>
                   )}
                   {tripDetails.bus.amenities.hasAC && (
-                    <div className="flex items-center gap-4 p-3 rounded-xl border border-gray-200">
-                      <Wind className="size-5 text-blue" />
-                      <span className="font-medium text-black">Air Conditioning</span>
+                    <div className="flex items-center gap-2 p-2 border border-gray-200">
+                      <Wind className="size-4 text-blue" />
+                      <span className="text-sm">AC</span>
                     </div>
                   )}
                   {tripDetails.bus.amenities.hasRefreshment && (
-                    <div className="flex items-center gap-4 p-3 rounded-xl border border-gray-200">
-                      <Coffee className="size-5 text-blue" />
-                      <span className="font-medium text-black">Refreshments</span>
+                    <div className="flex items-center gap-2 p-2 border border-gray-200">
+                      <Coffee className="size-4 text-blue" />
+                      <span className="text-sm">Refreshments</span>
                     </div>
                   )}
                 </div>
@@ -303,33 +293,23 @@ export default function TripDetailsPage() {
 
             {/* Sidebar */}
             <div>
-              <div className="rounded-2xl border border-gray-200 bg-white p-6 sticky top-24">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-black">Booking Summary</h3>
-                  <button className="grid size-9 place-content-center rounded-full border border-gray-200 text-gray-500 hover:text-blue">
-                    <Heart className="size-5" />
-                  </button>
-                </div>
+              <div className="border border-gray-200 bg-white p-4">
+                <h3 className="text-lg font-bold mb-4">Booking Summary</h3>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span className="text-gray-600">Trip Price</span>
-                    <span className="font-medium text-black">{tripDetails.currency.symbol}{tripDetails.travelPrice}</span>
+                    <span className="text-gray-600">Price per ticket</span>
+                    <span className="font-bold">{tripDetails.currency.symbol}{tripDetails.travelPrice}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span className="text-gray-600">Available Seats</span>
-                    <span className="font-medium text-green-600">{tripDetails.seatAvailability.availableSeats}</span>
-                  </div>
-                  <div className="flex justify-between py-3">
-                    <span className="text-lg font-semibold text-black">Total</span>
-                    <span className="text-2xl font-bold text-blue">{tripDetails.currency.symbol}{tripDetails.travelPrice}</span>
+                    <span className="text-gray-600">Available seats</span>
+                    <span className="font-bold text-green-600">{tripDetails.seatAvailability.availableSeats}</span>
                   </div>
                   <button 
                     onClick={() => setActiveTab('booking')}
-                    className="w-full flex items-center justify-between bg-blue text-white px-6 py-4 rounded-xl text-lg font-medium hover:bg-blue/90 transition"
+                    className="w-full bg-blue text-white px-4 py-3 hover:bg-blue/90"
                   >
                     Book This Trip
-                    <User className="size-6" />
                   </button>
                 </div>
               </div>
