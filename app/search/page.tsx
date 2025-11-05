@@ -370,9 +370,11 @@ function SearchResults() {
                           </button>
                           <button 
                             onClick={() => handleViewDetails(trip.tripGuid)}
-                            className="px-4 py-2 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-150 text-sm font-medium"
+                            disabled={trip.seatAvailability.availableSeats === 0}
+                            title={trip.seatAvailability.availableSeats === 0 ? '0 available seats' : ''}
+                            className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:hover:text-gray-400 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                           >
-                            Book Now
+                            {trip.seatAvailability.availableSeats === 0 ? 'No Seats' : 'Book Now'}
                           </button>
                         </div>
                       </div>

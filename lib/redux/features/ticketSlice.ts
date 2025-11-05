@@ -276,7 +276,7 @@ export const fetchBookingDetail = createAsyncThunk(
     })
     const data = await response.json()
     if (!response.ok) throw new Error(data.message || 'Failed to fetch booking details')
-    return data.data.trip
+    return data.data.booking
   }
 )
 

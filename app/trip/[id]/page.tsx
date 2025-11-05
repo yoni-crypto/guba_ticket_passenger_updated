@@ -56,12 +56,36 @@ export default function TripDetailsPage() {
     setPassengers(updated)
   }
 
+  const validatePhoneNumber = (phone: string) => {
+    const phoneRegex = /^[0-9]{9}$/
+    return phoneRegex.test(phone)
+  }
+
   const handleBooking = async () => {
     if (!isAuthenticated) {
       toast.error('Please login to book tickets')
       setShowAuthModal(true)
       return
     }
+    
+    const availableSeats = Number(tripDetails?.seatAvailability.availableSeats || 0)
+    
+    if (availableSeats === 0) {
+      toast.error('No available seats for this trip')
+      return
+    }
+    
+    if (passengers.length > availableSeats) {
+      toast.error(`Only ${availableSeats} seats available`)
+      return
+    }
+    
+    const invalidPhones = passengers.filter(p => !validatePhoneNumber(p.mobileNumber))
+    if (invalidPhones.length > 0) {
+      toast.error('Please enter valid phone numbers (9 digits)')
+      return
+    }
+    
     if (tripDetails) {
       const result = await dispatch(bookTicket({
         tripGuid: tripDetails.tripGuid,
@@ -77,7 +101,7 @@ export default function TripDetailsPage() {
   }
 
   const isFormValid = passengers.every(p => 
-    p.firstName.trim() && p.lastName.trim() && p.mobileNumber.trim()
+    p.firstName.trim() && p.lastName.trim() && p.mobileNumber.trim() && validatePhoneNumber(p.mobileNumber)
   )
 
   useEffect(() => {
@@ -260,7 +284,9 @@ export default function TripDetailsPage() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Available Seats</p>
-                    <p className="font-bold text-green-600">{tripDetails.seatAvailability.availableSeats} seats</p>
+                    <p className={`font-bold ${Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'No available seats' : `${tripDetails.seatAvailability.availableSeats} seats`}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -303,13 +329,16 @@ export default function TripDetailsPage() {
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-200">
                     <span className="text-gray-600">Available seats</span>
-                    <span className="font-bold text-green-600">{tripDetails.seatAvailability.availableSeats}</span>
+                    <span className={`font-bold ${Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'No seats' : tripDetails.seatAvailability.availableSeats}
+                    </span>
                   </div>
                   <button 
                     onClick={() => setActiveTab('booking')}
-                    className="w-full bg-blue text-white px-4 py-3 hover:bg-blue/90"
+                    disabled={Number(tripDetails.seatAvailability.availableSeats) === 0}
+                    className="w-full bg-blue text-white px-4 py-3 hover:bg-blue/90 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Book This Trip
+                    {Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'No Available Seats' : 'Book This Trip'}
                   </button>
                 </div>
               </div>
@@ -404,11 +433,19 @@ export default function TripDetailsPage() {
                           <input
                             type="tel"
                             value={passenger.mobileNumber}
-                            onChange={(e) => updatePassenger(index, 'mobileNumber', e.target.value)}
-                            className="flex-1 px-4 py-3 border border-l-0 border-gray-300 rounded-r-lg focus:ring-2 focus:ring-blue focus:border-transparent"
+                            onChange={(e) => updatePassenger(index, 'mobileNumber', e.target.value.replace(/[^0-9]/g, ''))}
+                            className={`flex-1 px-4 py-3 border border-l-0 rounded-r-lg focus:ring-2 focus:ring-blue focus:border-transparent ${
+                              passenger.mobileNumber && !validatePhoneNumber(passenger.mobileNumber) 
+                                ? 'border-red-300 bg-red-50' 
+                                : 'border-gray-300'
+                            }`}
                             placeholder="Enter phone number"
+                            maxLength={9}
                           />
                         </div>
+                        {passenger.mobileNumber && !validatePhoneNumber(passenger.mobileNumber) && (
+                          <p className="text-red-500 text-xs mt-1">Phone number must be 9 digits</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -428,11 +465,17 @@ export default function TripDetailsPage() {
 
                 <button
                   onClick={addPassenger}
-                  className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-blue hover:text-blue transition-colors"
+                  disabled={passengers.length >= Number(tripDetails?.seatAvailability.availableSeats || 0)}
+                  className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-blue hover:text-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Plus className="size-5" />
                   Add Another Passenger
                 </button>
+                {passengers.length >= Number(tripDetails?.seatAvailability.availableSeats || 0) && (
+                  <p className="text-red-500 text-sm text-center mt-2">
+                    Maximum {tripDetails?.seatAvailability.availableSeats} passengers allowed
+                  </p>
+                )}
               </div>
 
               <div className="mt-8 pt-6 border-t border-gray-200">
@@ -445,10 +488,12 @@ export default function TripDetailsPage() {
                   </button>
                   <button
                     onClick={handleBooking}
-                    disabled={!isFormValid || bookingLoading}
+                    disabled={!isFormValid || bookingLoading || Number(tripDetails?.seatAvailability.availableSeats) === 0}
                     className="flex-1 py-3 px-6 bg-blue text-white rounded-lg hover:bg-blue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    {bookingLoading ? 'Booking...' : `Book ${passengers.length} Ticket${passengers.length > 1 ? 's' : ''}`}
+                    {bookingLoading ? 'Booking...' : 
+                     Number(tripDetails?.seatAvailability.availableSeats) === 0 ? 'No Available Seats' :
+                     `Book ${passengers.length} Ticket${passengers.length > 1 ? 's' : ''}`}
                   </button>
                 </div>
                 {bookingError && (
