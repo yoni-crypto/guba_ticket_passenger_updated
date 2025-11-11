@@ -4,6 +4,7 @@ import { Navigation } from 'swiper/modules'
 import { ChevronLeft, ChevronRight, Luggage, MoveUpRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import 'swiper/css'
 import 'swiper/css/navigation'
 
@@ -15,36 +16,37 @@ interface Destination {
 }
 
 export default function GlobalDestinations() {
+  const { t } = useTranslation('home')
   const destinations: Destination[] = [
     {
       image: 'https://images.pexels.com/photos/30177512/pexels-photo-30177512/free-photo-of-addis-ababa-skyline-at-sunset.jpeg',
-      title: 'Addis Ababa',
-      description: 'Ethiopia\'s bustling capital - gateway to all major cities with daily departures.',
-      routes: '15+ Daily Routes'
+      title: t('destinations.addisAbaba.title'),
+      description: t('destinations.addisAbaba.description'),
+      routes: t('destinations.addisAbaba.routes')
     },
     {
       image: 'https://t3.ftcdn.net/jpg/03/18/86/74/360_F_318867476_VYMDqlKgnMmZ3m28lRuerk0bf54765vR.jpg',
-      title: 'Bahir Dar',
-      description: 'Scenic lakeside city with comfortable bus services and beautiful routes.',
-      routes: '8+ Daily Routes'
+      title: t('destinations.bahirDar.title'),
+      description: t('destinations.bahirDar.description'),
+      routes: t('destinations.bahirDar.routes')
     },
     {
       image: 'https://t3.ftcdn.net/jpg/00/31/25/88/360_F_31258890_tmzotBg1byBPaGgCX11iYhuBS34GAcut.jpg',
-      title: 'Gondar',
-      description: 'Historic city accessible via modern buses through stunning highland scenery.',
-      routes: '6+ Daily Routes'
+      title: t('destinations.gondar.title'),
+      description: t('destinations.gondar.description'),
+      routes: t('destinations.gondar.routes')
     },
     {
       image: 'https://media.istockphoto.com/id/186914973/photo/obelisk-in-the-aksum-kingdom-ethiopia.jpg?s=612x612&w=0&k=20&c=xcINJxnz71uvfROg0uby9QrRlyNeQesLkWr5JLnXmGE=',
-      title: 'Axum',
-      description: 'Ancient city connected with reliable bus services to major destinations.',
-      routes: '5+ Daily Routes'
+      title: t('destinations.axum.title'),
+      description: t('destinations.axum.description'),
+      routes: t('destinations.axum.routes')
     },
     {
       image: 'https://media.istockphoto.com/id/186914973/photo/obelisk-in-the-aksum-kingdom-ethiopia.jpg?s=612x612&w=0&k=20&c=xcINJxnz71uvfROg0uby9QrRlyNeQesLkWr5JLnXmGE=',
-      title: 'Hawwasa',
-      description: 'Coffee capital with frequent bus connections through scenic landscapes.',
-      routes: '10+ Daily Routes'
+      title: t('destinations.hawwasa.title'),
+      description: t('destinations.hawwasa.description'),
+      routes: t('destinations.hawwasa.routes')
     }
   ]
 
@@ -54,15 +56,15 @@ export default function GlobalDestinations() {
         <div className="mb-8 flex flex-wrap items-end justify-between gap-5 lg:mb-12">
           <div className="space-y-3 lg:space-y-4">
             <span className="inline-block rounded-full bg-white/20 px-3 py-1.5 text-sm text-white lg:px-4 lg:py-2.5 lg:text-lg">
-              Popular Destinations
+              {t('destinations.badge')}
             </span>
             <h2 className="w-full max-w-185.75 text-2xl font-medium text-white sm:text-3xl lg:text-4xl xl:text-5xl">
-              Travel to{' '}
-              <span className="font-playfair italic">amazing</span>{' '}
-              cities
+              {t('destinations.title')}{' '}
+              <span className="font-playfair italic">{t('destinations.titleItalic')}</span>{' '}
+              {t('destinations.title2')}
               <span className="block">
-                across{' '}
-                <span className="font-playfair italic">Ethiopia with comfort.</span>
+                {t('destinations.subtitle')}{' '}
+                <span className="font-playfair italic">{t('destinations.subtitleItalic')}</span>
               </span>
             </h2>
           </div>
@@ -113,7 +115,7 @@ export default function GlobalDestinations() {
                         {destination.description}
                       </p>
                       <Link href="/search" className="btn w-full flex items-center justify-between bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition">
-                        Book to {destination.title}
+                        {t('destinations.bookTo')} {destination.title}
                         <MoveUpRight className="size-4" />
                       </Link>
                     </div>

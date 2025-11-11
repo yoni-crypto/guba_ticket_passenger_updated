@@ -2,6 +2,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, EffectFade } from 'swiper/modules'
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -13,6 +14,7 @@ interface Slide {
 }
 
 export default function HeroSlider() {
+  const { t } = useTranslation('home')
   const slides: Slide[] = [
     { image: 'https://images.unsplash.com/photo-1624314138470-5a2f24623f10?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YWRkaXMlMjBhYmFiYXxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000', location: 'Addis Ababa' },
     // { image: 'https://t4.ftcdn.net/jpg/05/42/28/95/360_F_542289514_Sz8JkFAWX2L0btgmEdTce9tYgT6CKOek.jpg', location: 'BahirDar' },
@@ -51,15 +53,15 @@ export default function HeroSlider() {
       <div className="absolute inset-0 z-20 flex items-end">
         <div className="container mx-auto px-4 pb-20 sm:pb-24 lg:pb-32">
           <h1 className="mx-auto mb-6 max-w-220 text-center text-[26px]/9 text-white sm:mb-10 sm:text-4xl/10 lg:mb-16 lg:px-10 lg:text-5xl/15 xl:text-[56px]/19 2xl:px-0">
-            Book your
-            <span className="font-playfair font-medium italic"> bus ticket </span>
+            {t('hero.title')}
+            <span className="font-playfair font-medium italic"> {t('hero.titleItalic')} </span>
             <span className="block">
-              and travel across
-              <span className="font-playfair font-medium italic"> Ethiopia </span>
+              {t('hero.subtitle')}
+              <span className="font-playfair font-medium italic"> {t('hero.subtitleItalic')} </span>
             </span>
             <span className="block">
-              with
-              <span className="font-playfair font-medium italic"> comfort and ease.</span>
+              {t('hero.subtitle2')}
+              <span className="font-playfair font-medium italic"> {t('hero.subtitle2Italic')}</span>
             </span>
           </h1>
         </div>

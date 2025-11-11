@@ -2,6 +2,7 @@
 
 import { useEffect, Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { searchTrips } from '@/lib/redux/features/tripSlice';
 import { fetchBusCarriers } from '@/lib/redux/features/busCarrierSlice';
@@ -21,6 +22,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 function SearchResults() {
+  const { t } = useTranslation('pages');
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const { trips, loading, error } = useAppSelector((state) => state.trip);
@@ -62,7 +64,7 @@ function SearchResults() {
           <div className="container mx-auto px-4 text-center py-20">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue/20 border-t-blue"></div>
             <p className="mt-6 text-xl text-gray-600">
-              Searching for available trips...
+              {t('search.searching')}
             </p>
           </div>
         </div>
@@ -79,7 +81,7 @@ function SearchResults() {
               <Bus className="size-10" />
             </div>
             <h3 className="text-2xl font-medium text-black mb-4">
-              Search Error
+              {t('search.searchError')}
             </h3>
             <p className="text-red-600">{error}</p>
           </div>
@@ -112,13 +114,13 @@ function SearchResults() {
             {originGuid && destinationGuid && travelDate && (
               <>
                 <span className="bg-white/20 text-white inline-block rounded-full px-3 py-1.5 text-sm lg:px-4 lg:py-2.5 lg:text-lg">
-                  Search Results
+                  {t('search.searchResults')}
                 </span>
                 <h1 className="mt-4 text-3xl font-medium text-white sm:text-4xl">
-                  Available <span className="italic">Trips</span>
+                  {t('search.availableTrips')} <span className="italic">{t('search.trips')}</span>
                 </h1>
                 <p className="text-white mt-2">
-                  {trips.length} {trips.length === 1 ? 'trip' : 'trips'} found
+                  {trips.length} {trips.length === 1 ? t('search.trip') : t('search.trips')} {t('search.tripsFound')}
                 </p>
               </>
             )}
@@ -131,11 +133,10 @@ function SearchResults() {
                 <Bus className="size-10" />
               </div>
               <h3 className="text-2xl font-medium text-black mb-4">
-                Start Your Search
+                {t('search.startSearch')}
               </h3>
               <p className="text-gray-600 max-w-md mx-auto">
-                Please enter origin, destination, and departure date to search
-                for available trips.
+                {t('search.enterSearchCriteria')}
               </p>
             </div>
           ) : trips.length === 0 ? (
@@ -143,12 +144,12 @@ function SearchResults() {
               {/* Filter Sidebar */}
               <div className="lg:col-span-1">
                 <div className="bg-white border border-gray-200 rounded-xl p-4 sticky top-4">
-                  <h3 className="font-medium text-gray-900 mb-4">Filter by Bus Carrier</h3>
+                  <h3 className="font-medium text-gray-900 mb-4">{t('search.filterByCarrier')}</h3>
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Search carriers..."
+                      placeholder={t('search.searchCarriers')}
                       value={carrierSearch}
                       onChange={(e) => setCarrierSearch(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -164,7 +165,7 @@ function SearchResults() {
                         onChange={(e) => setSelectedCarrier(e.target.value)}
                         className="text-blue-600"
                       />
-                      <span className="text-sm text-gray-700">All Carriers</span>
+                      <span className="text-sm text-gray-700">{t('search.allCarriers')}</span>
                     </label>
                     {busCarriers.map((carrier) => (
                       <label
@@ -195,10 +196,10 @@ function SearchResults() {
                     <Bus className="size-10" />
                   </div>
                   <h3 className="text-2xl font-medium text-black mb-4">
-                    No trips found
+                    {t('search.noTripsFound')}
                   </h3>
                   <p className="text-gray-600 max-w-md mx-auto">
-                    We couldn’t find any trips matching your search criteria.
+                    {t('search.noTripsMatching')}
                   </p>
                 </div>
               </div>
@@ -209,12 +210,12 @@ function SearchResults() {
               {/* Filter Sidebar */}
               <div className="lg:col-span-1">
                 <div className="bg-white border border-gray-200 rounded-xl p-4 sticky top-4">
-                  <h3 className="font-medium text-gray-900 mb-4">Filter by Bus Carrier</h3>
+                  <h3 className="font-medium text-gray-900 mb-4">{t('search.filterByCarrier')}</h3>
                   <div className="relative mb-4">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Search carriers..."
+                      placeholder={t('search.searchCarriers')}
                       value={carrierSearch}
                       onChange={(e) => setCarrierSearch(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -230,7 +231,7 @@ function SearchResults() {
                         onChange={(e) => setSelectedCarrier(e.target.value)}
                         className="text-blue-600"
                       />
-                      <span className="text-sm text-gray-700">All Carriers</span>
+                      <span className="text-sm text-gray-700">{t('search.allCarriers')}</span>
                     </label>
                     {busCarriers.map((carrier) => (
                       <label
@@ -275,7 +276,7 @@ function SearchResults() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-gray-500">Departure</p>
+                        <p className="text-xs text-gray-500">{t('search.departure')}</p>
                         <p className="text-sm font-medium text-gray-900">{trip.departureDate}</p>
                       </div>
                     </div>
@@ -318,7 +319,7 @@ function SearchResults() {
 
                     {trip.tripRoute.drops?.length > 0 && (
                       <div className="mt-3 text-sm">
-                        <p className="text-gray-500 mb-1">Stops</p>
+                        <p className="text-gray-500 mb-1">{t('search.stops')}</p>
                         <div className="flex flex-wrap gap-2">
                           {trip.tripRoute.drops.map((drop: any, idx: number) => (
                             <span
@@ -336,29 +337,29 @@ function SearchResults() {
                       <div className="flex flex-wrap gap-2 text-sm">
                         {trip.bus.amenities.hasWifi && (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1">
-                            <Wifi className="size-4 text-blue-600" /> Wi-Fi
+                            <Wifi className="size-4 text-blue-600" /> {t('search.wifi')}
                           </span>
                         )}
                         {trip.bus.amenities.hasAC && (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1">
-                            <Wind className="size-4 text-blue-600" /> A/C
+                            <Wind className="size-4 text-blue-600" /> {t('search.ac')}
                           </span>
                         )}
                         {trip.bus.amenities.hasRefreshment && (
                           <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1">
-                            <Coffee className="size-4 text-blue-600" /> Refreshment
+                            <Coffee className="size-4 text-blue-600" /> {t('search.refreshment')}
                           </span>
                         )}
                       </div>
                       <div className="flex items-center justify-between sm:justify-end gap-4">
                         <div className="text-right">
-                          <p className="text-xs text-gray-500">Price</p>
+                          <p className="text-xs text-gray-500">{t('search.price')}</p>
                           <p className="text-lg font-semibold text-gray-900">
                             {trip.currency.symbol}
                             {trip.travelPrice}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {trip.seatAvailability.availableSeats} seats
+                            {trip.seatAvailability.availableSeats} {t('search.seats')}
                           </p>
                         </div>
                         <div className="flex gap-2">
@@ -366,7 +367,7 @@ function SearchResults() {
                             onClick={() => handleViewDetails(trip.tripGuid)}
                             className="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-150 text-sm font-medium"
                           >
-                            View Details
+                            {t('search.viewDetails')}
                           </button>
                           <button 
                             onClick={() => handleViewDetails(trip.tripGuid)}
@@ -374,7 +375,7 @@ function SearchResults() {
                             title={trip.seatAvailability.availableSeats === 0 ? '0 available seats' : ''}
                             className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:hover:text-gray-400 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                           >
-                            {trip.seatAvailability.availableSeats === 0 ? 'No Seats' : 'Book Now'}
+                            {trip.seatAvailability.availableSeats === 0 ? t('search.noSeats') : t('search.bookNow')}
                           </button>
                         </div>
                       </div>

@@ -2,10 +2,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Search } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { fetchCities } from '@/lib/redux/features/citySlice'
 
 export default function SearchForm() {
+  const { t } = useTranslation('home')
   const router = useRouter()
   const searchParams = useSearchParams()
   const dispatch = useAppDispatch()
@@ -87,10 +89,10 @@ export default function SearchForm() {
           
         <div className="flex grow flex-col gap-3 lg:flex-row lg:gap-4 xl:gap-6">
           <div ref={originRef} className="relative w-full space-y-1 lg:space-y-2">
-            <label className="block font-medium">From</label>
+            <label className="block font-medium">{t('search.from')}</label>
             <input
               type="text"
-              placeholder="Origin City"
+              placeholder={t('search.originPlaceholder')}
               value={origin || originSearch}
               onChange={(e) => {
                 setOriginSearch(e.target.value)
@@ -103,7 +105,7 @@ export default function SearchForm() {
             {showOriginDropdown && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
                 {loading ? (
-                  <div className="p-4 text-center text-gray-500">Loading cities...</div>
+                  <div className="p-4 text-center text-gray-500">{t('search.loadingCities')}</div>
                 ) : filteredOriginCities.length > 0 ? (
                   filteredOriginCities.map((city) => (
                     <div
@@ -121,7 +123,7 @@ export default function SearchForm() {
                     </div>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-gray-500">No cities found</div>
+                  <div className="p-4 text-center text-gray-500">{t('search.noCitiesFound')}</div>
                 )}
               </div>
             )}
@@ -129,10 +131,10 @@ export default function SearchForm() {
           <span className="via-gray/50 bg-gray/20 block h-px shrink-0 from-white to-white lg:h-auto lg:w-0.5 lg:bg-gradient-to-t"></span>
           
           <div ref={destinationRef} className="relative w-full space-y-1 lg:space-y-2">
-            <label className="block font-medium">To</label>
+            <label className="block font-medium">{t('search.to')}</label>
             <input
               type="text"
-              placeholder="Destination City"
+              placeholder={t('search.destinationPlaceholder')}
               value={destination || destinationSearch}
               onChange={(e) => {
                 setDestinationSearch(e.target.value)
@@ -145,7 +147,7 @@ export default function SearchForm() {
             {showDestinationDropdown && (
               <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
                 {loading ? (
-                  <div className="p-4 text-center text-gray-500">Loading cities...</div>
+                  <div className="p-4 text-center text-gray-500">{t('search.loadingCities')}</div>
                 ) : filteredDestinationCities.length > 0 ? (
                   filteredDestinationCities.map((city) => (
                     <div
@@ -163,7 +165,7 @@ export default function SearchForm() {
                     </div>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-gray-500">No cities found</div>
+                  <div className="p-4 text-center text-gray-500">{t('search.noCitiesFound')}</div>
                 )}
               </div>
             )}
@@ -171,7 +173,7 @@ export default function SearchForm() {
           <span className="via-gray/50 bg-gray/20 block h-px shrink-0 from-white to-white lg:h-auto lg:w-0.5 lg:bg-gradient-to-t"></span>
           
           <div className="w-full space-y-1 lg:space-y-2">
-            <label className="block font-medium">Departure Date</label>
+            <label className="block font-medium">{t('search.departureDate')}</label>
             <input
               type="date"
               value={departureDate}
@@ -182,7 +184,7 @@ export default function SearchForm() {
         </div>
         <button type="submit" className="btn btn-primary flex items-center gap-2">
           <Search className="size-4" />
-          Search
+          {t('search.searchButton')}
         </button>
       </form>
     </div>

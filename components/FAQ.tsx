@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { MoveUpRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface FAQItem {
   id: number
@@ -9,23 +10,24 @@ interface FAQItem {
 }
 
 export default function FAQ() {
+  const { t } = useTranslation('home')
   const [activeId, setActiveId] = useState<number>(1)
 
   const faqs: FAQItem[] = [
     {
       id: 1,
-      question: 'How do I book a ticket?',
-      answer: 'Search for your route, fill in passenger information, click book, complete payment, then confirm your seat selection.'
+      question: t('faq.q1.question'),
+      answer: t('faq.q1.answer')
     },
     {
       id: 2,
-      question: 'What payment methods do you accept?',
-      answer: 'We currently accept Chapa payment gateway which supports CBE, Awash Bank, Abyssinia Bank, and other major Ethiopian banks.'
+      question: t('faq.q2.question'),
+      answer: t('faq.q2.answer')
     },
     {
       id: 3,
-      question: 'Can I choose a seat before payment?',
-      answer: 'When you book, one seat will be reserved for you until the payment time expires. After completing payment, you can then choose your preferred seat.'
+      question: t('faq.q3.question'),
+      answer: t('faq.q3.answer')
     }
   ]
 
@@ -38,10 +40,10 @@ export default function FAQ() {
       <div className="container mx-auto px-4 flex flex-col justify-between gap-10 lg:flex-row">
         <div className="space-y-4 lg:space-y-6">
           <h2 className="w-full max-w-185.75 text-2xl font-medium text-black sm:text-3xl lg:text-4xl xl:text-5xl">
-            Frequently Asked Questions
+            {t('faq.title')}
           </h2>
           <p className="text-gray w-full max-w-153.5 lg:text-lg">
-            Still have questions? Our customer support team is here to help you with your bus ticket booking.
+            {t('faq.description')}
           </p>
         </div>
 

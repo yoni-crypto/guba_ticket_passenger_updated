@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { getTripDetails, clearTripDetails } from '@/lib/redux/features/tripSlice'
 import { bookTicket } from '@/lib/redux/features/bookingSlice'
@@ -13,6 +14,7 @@ import { ArrowLeft, Wifi, Wind, Coffee, Bus, Heart, MoveUpRight, Plus, Minus, Us
 import toast from 'react-hot-toast'
 
 export default function TripDetailsPage() {
+  const { t } = useTranslation('pages')
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -63,7 +65,7 @@ export default function TripDetailsPage() {
 
   const handleBooking = async () => {
     if (!isAuthenticated) {
-      toast.error('Please login to book tickets')
+      toast.error(t('trip.pleaseLogin'))
       setShowAuthModal(true)
       return
     }
@@ -71,18 +73,18 @@ export default function TripDetailsPage() {
     const availableSeats = Number(tripDetails?.seatAvailability.availableSeats || 0)
     
     if (availableSeats === 0) {
-      toast.error('No available seats for this trip')
+      toast.error(t('trip.noAvailableSeatsError'))
       return
     }
     
     if (passengers.length > availableSeats) {
-      toast.error(`Only ${availableSeats} seats available`)
+      toast.error(`${t('trip.onlySeatsAvailable')} ${availableSeats} ${t('trip.seatsAvailable')}`)
       return
     }
     
     const invalidPhones = passengers.filter(p => !validatePhoneNumber(p.mobileNumber))
     if (invalidPhones.length > 0) {
-      toast.error('Please enter valid phone numbers (9 digits)')
+      toast.error(t('trip.enterValidPhones'))
       return
     }
     
@@ -92,10 +94,10 @@ export default function TripDetailsPage() {
         tickets: passengers
       }))
       if (bookTicket.fulfilled.match(result)) {
-        toast.success('Booking successful!')
+        toast.success(t('trip.bookingSuccessful'))
         router.push('/my-tickets')
       } else if (bookTicket.rejected.match(result)) {
-        toast.error(result.error.message || 'Booking failed')
+        toast.error(result.error.message || t('trip.bookingFailed'))
       }
     }
   }
@@ -136,7 +138,7 @@ export default function TripDetailsPage() {
         <div className="min-h-screen bg-white flex items-center justify-center font-switzer">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-blue/20 border-t-blue"></div>
-            <p className="mt-6 text-gray-600 text-lg">Loading trip details...</p>
+            <p className="mt-6 text-gray-600 text-lg">{t('trip.loading')}</p>
           </div>
         </div>
         <Footer />
@@ -151,14 +153,14 @@ export default function TripDetailsPage() {
         <div className="min-h-screen bg-white flex flex-col items-center justify-center text-center font-switzer">
           <div className="p-6">
             <Bus className="size-10 text-red-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-black mb-2">Failed to Load Trip</h3>
+            <h3 className="text-xl font-semibold text-black mb-2">{t('trip.failedToLoad')}</h3>
             <p className="text-red-600 mb-6">{detailsError}</p>
             <button 
               onClick={() => router.back()}
               className="px-5 py-2 rounded-lg bg-blue text-white hover:bg-blue/90 flex items-center gap-2 mx-auto"
             >
               <ArrowLeft className="size-4" />
-              Go Back
+              {t('trip.goBack')}
             </button>
           </div>
         </div>
@@ -172,7 +174,7 @@ export default function TripDetailsPage() {
       <>
         <NavBar />
         <div className="min-h-screen bg-white flex items-center justify-center font-switzer">
-          <h3 className="text-2xl font-medium text-black">Trip not found</h3>
+          <h3 className="text-2xl font-medium text-black">{t('trip.tripNotFound')}</h3>
         </div>
         <Footer />
       </>
@@ -191,7 +193,7 @@ export default function TripDetailsPage() {
               className="flex items-center gap-2 text-white hover:text-white/80 mb-4"
             >
               <ArrowLeft className="size-5" />
-              <span>Back to Search</span>
+              <span>{t('trip.backToSearch')}</span>
             </button>
 
             <div className="flex justify-between items-center">
@@ -203,7 +205,7 @@ export default function TripDetailsPage() {
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold">{tripDetails.currency.symbol}{tripDetails.travelPrice}</p>
-                <p className="text-white/70 text-sm">per person</p>
+                <p className="text-white/70 text-sm">{t('trip.perPerson')}</p>
               </div>
             </div>
           </div>
@@ -221,7 +223,7 @@ export default function TripDetailsPage() {
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              Trip Details
+              {t('trip.tripDetails')}
             </button>
             <button
               onClick={() => setActiveTab('booking')}
@@ -231,7 +233,7 @@ export default function TripDetailsPage() {
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
-              Book Tickets ({passengers.length})
+              {t('trip.bookTickets')} ({passengers.length})
             </button>
           </div>
 
@@ -243,7 +245,7 @@ export default function TripDetailsPage() {
               {/* Route Details */}
               <div className="border border-gray-200 bg-white p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold">Route Details</h2>
+                  <h2 className="text-lg font-bold">{t('trip.routeDetails')}</h2>
                   <span className="text-sm bg-gray-100 px-3 py-1">
                     {tripDetails.tripRoute.estimatedTravelTime}
                   </span>
@@ -254,7 +256,7 @@ export default function TripDetailsPage() {
                   <div className="flex items-start gap-3">
                     <div className="w-3 h-3 bg-green-600 rounded-full mt-1"></div>
                     <div>
-                      <p className="text-sm text-green-600 font-medium">FROM</p>
+                      <p className="text-sm text-green-600 font-medium">{t('trip.from')}</p>
                       <h3 className="text-lg font-bold">{tripDetails.tripRoute.origin.name}</h3>
                       <p className="text-gray-600">{tripDetails.tripRoute.origin.region?.name}</p>
                       <p className="text-sm text-gray-500">{tripDetails.tripRoute.origin.address}</p>
@@ -265,7 +267,7 @@ export default function TripDetailsPage() {
                   <div className="flex items-start gap-3">
                     <div className="w-3 h-3 bg-red-600 rounded-full mt-1"></div>
                     <div>
-                      <p className="text-sm text-red-600 font-medium">TO</p>
+                      <p className="text-sm text-red-600 font-medium">{t('trip.to')}</p>
                       <h3 className="text-lg font-bold">{tripDetails.tripRoute.destination.name}</h3>
                       <p className="text-gray-600">{tripDetails.tripRoute.destination.region?.name}</p>
                       <p className="text-sm text-gray-500">{tripDetails.tripRoute.destination.address}</p>
@@ -276,16 +278,16 @@ export default function TripDetailsPage() {
 
               {/* Trip Info */}
               <div className="border border-gray-200 bg-white p-4">
-                <h2 className="text-lg font-bold mb-4">Trip Information</h2>
+                <h2 className="text-lg font-bold mb-4">{t('trip.tripInformation')}</h2>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Departure Date</p>
+                    <p className="text-sm text-gray-600">{t('trip.departureDate')}</p>
                     <p className="font-bold">{tripDetails.departureDate}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Available Seats</p>
+                    <p className="text-sm text-gray-600">{t('trip.availableSeats')}</p>
                     <p className={`font-bold ${Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'No available seats' : `${tripDetails.seatAvailability.availableSeats} seats`}
+                      {Number(tripDetails.seatAvailability.availableSeats) === 0 ? t('trip.noAvailableSeats') : `${tripDetails.seatAvailability.availableSeats} ${t('trip.seats')}`}
                     </p>
                   </div>
                 </div>
@@ -293,24 +295,24 @@ export default function TripDetailsPage() {
 
               {/* Amenities */}
               <div className="border border-gray-200 bg-white p-4">
-                <h2 className="text-lg font-bold mb-4">Bus Amenities</h2>
+                <h2 className="text-lg font-bold mb-4">{t('trip.busAmenities')}</h2>
                 <div className="grid grid-cols-3 gap-3">
                   {tripDetails.bus.amenities.hasWifi && (
                     <div className="flex items-center gap-2 p-2 border border-gray-200">
                       <Wifi className="size-4 text-blue" />
-                      <span className="text-sm">WiFi</span>
+                      <span className="text-sm">{t('trip.wifi')}</span>
                     </div>
                   )}
                   {tripDetails.bus.amenities.hasAC && (
                     <div className="flex items-center gap-2 p-2 border border-gray-200">
                       <Wind className="size-4 text-blue" />
-                      <span className="text-sm">AC</span>
+                      <span className="text-sm">{t('trip.ac')}</span>
                     </div>
                   )}
                   {tripDetails.bus.amenities.hasRefreshment && (
                     <div className="flex items-center gap-2 p-2 border border-gray-200">
                       <Coffee className="size-4 text-blue" />
-                      <span className="text-sm">Refreshments</span>
+                      <span className="text-sm">{t('trip.refreshments')}</span>
                     </div>
                   )}
                 </div>
@@ -320,17 +322,17 @@ export default function TripDetailsPage() {
             {/* Sidebar */}
             <div>
               <div className="border border-gray-200 bg-white p-4">
-                <h3 className="text-lg font-bold mb-4">Booking Summary</h3>
+                <h3 className="text-lg font-bold mb-4">{t('trip.bookingSummary')}</h3>
 
                 <div className="space-y-3">
                   <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span className="text-gray-600">Price per ticket</span>
+                    <span className="text-gray-600">{t('trip.pricePerTicket')}</span>
                     <span className="font-bold">{tripDetails.currency.symbol}{tripDetails.travelPrice}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span className="text-gray-600">Available seats</span>
+                    <span className="text-gray-600">{t('trip.availableSeats')}</span>
                     <span className={`font-bold ${Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'No seats' : tripDetails.seatAvailability.availableSeats}
+                      {Number(tripDetails.seatAvailability.availableSeats) === 0 ? t('trip.noSeats') : tripDetails.seatAvailability.availableSeats}
                     </span>
                   </div>
                   <button 
@@ -338,7 +340,7 @@ export default function TripDetailsPage() {
                     disabled={Number(tripDetails.seatAvailability.availableSeats) === 0}
                     className="w-full bg-blue text-white px-4 py-3 hover:bg-blue/90 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {Number(tripDetails.seatAvailability.availableSeats) === 0 ? 'No Available Seats' : 'Book This Trip'}
+                    {Number(tripDetails.seatAvailability.availableSeats) === 0 ? t('trip.noAvailableSeatsButton') : t('trip.bookThisTrip')}
                   </button>
                 </div>
               </div>
@@ -350,11 +352,11 @@ export default function TripDetailsPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-2xl font-semibold text-black">Passenger Information</h2>
-                  <p className="text-gray-600 mt-1">Fill details for all passengers</p>
+                  <h2 className="text-2xl font-semibold text-black">{t('trip.passengerInformation')}</h2>
+                  <p className="text-gray-600 mt-1">{t('trip.fillDetails')}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Total Amount</p>
+                  <p className="text-sm text-gray-500">{t('trip.totalAmount')}</p>
                   <p className="text-2xl font-bold text-blue">
                     {tripDetails?.currency.symbol}{(tripDetails?.travelPrice || 0) * passengers.length}
                   </p>
@@ -367,7 +369,7 @@ export default function TripDetailsPage() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-4">
                         <h3 className="text-lg font-medium text-black">
-                          Passenger {index + 1}
+                          {t('trip.passenger')} {index + 1}
                         </h3>
                         {index === 0 && isAuthenticated && (
                           <label className="flex items-center gap-2 text-sm">
@@ -377,7 +379,7 @@ export default function TripDetailsPage() {
                               onChange={(e) => setUseMyInfo(e.target.checked)}
                               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                             />
-                            <span className="text-gray-600">Use my info</span>
+                            <span className="text-gray-600">{t('trip.useMyInfo')}</span>
                           </label>
                         )}
                       </div>
@@ -394,31 +396,31 @@ export default function TripDetailsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          First Name *
+                          {t('trip.firstName')}
                         </label>
                         <input
                           type="text"
                           value={passenger.firstName}
                           onChange={(e) => updatePassenger(index, 'firstName', e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
-                          placeholder="Enter first name"
+                          placeholder={t('trip.enterFirstName')}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Last Name *
+                          {t('trip.lastName')}
                         </label>
                         <input
                           type="text"
                           value={passenger.lastName}
                           onChange={(e) => updatePassenger(index, 'lastName', e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
-                          placeholder="Enter last name"
+                          placeholder={t('trip.enterLastName')}
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Phone Number *
+                          {t('trip.phoneNumber')}
                         </label>
                         <div className="flex">
                           <select
@@ -439,24 +441,24 @@ export default function TripDetailsPage() {
                                 ? 'border-red-300 bg-red-50' 
                                 : 'border-gray-300'
                             }`}
-                            placeholder="Enter phone number"
+                            placeholder={t('trip.enterPhoneNumber')}
                             maxLength={9}
                           />
                         </div>
                         {passenger.mobileNumber && !validatePhoneNumber(passenger.mobileNumber) && (
-                          <p className="text-red-500 text-xs mt-1">Phone number must be 9 digits</p>
+                          <p className="text-red-500 text-xs mt-1">{t('trip.phoneMustBe9Digits')}</p>
                         )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Email (Optional)
+                          {t('trip.emailOptional')}
                         </label>
                         <input
                           type="email"
                           value={passenger.email}
                           onChange={(e) => updatePassenger(index, 'email', e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue focus:border-transparent"
-                          placeholder="Enter email address"
+                          placeholder={t('trip.enterEmail')}
                         />
                       </div>
                     </div>
@@ -469,11 +471,11 @@ export default function TripDetailsPage() {
                   className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-gray-300 rounded-xl text-gray-600 hover:border-blue hover:text-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Plus className="size-5" />
-                  Add Another Passenger
+                  {t('trip.addAnotherPassenger')}
                 </button>
                 {passengers.length >= Number(tripDetails?.seatAvailability.availableSeats || 0) && (
                   <p className="text-red-500 text-sm text-center mt-2">
-                    Maximum {tripDetails?.seatAvailability.availableSeats} passengers allowed
+                    {t('trip.maximumPassengers')} {tripDetails?.seatAvailability.availableSeats} {t('trip.passengersAllowed')}
                   </p>
                 )}
               </div>
@@ -484,16 +486,16 @@ export default function TripDetailsPage() {
                     onClick={() => setActiveTab('details')}
                     className="flex-1 py-3 px-6 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    Back to Details
+                    {t('trip.backToDetails')}
                   </button>
                   <button
                     onClick={handleBooking}
                     disabled={!isFormValid || bookingLoading || Number(tripDetails?.seatAvailability.availableSeats) === 0}
                     className="flex-1 py-3 px-6 bg-blue text-white rounded-lg hover:bg-blue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    {bookingLoading ? 'Booking...' : 
-                     Number(tripDetails?.seatAvailability.availableSeats) === 0 ? 'No Available Seats' :
-                     `Book ${passengers.length} Ticket${passengers.length > 1 ? 's' : ''}`}
+                    {bookingLoading ? t('trip.booking') : 
+                     Number(tripDetails?.seatAvailability.availableSeats) === 0 ? t('trip.noAvailableSeatsButton') :
+                     `${t('trip.book')} ${passengers.length} ${passengers.length > 1 ? t('trip.tickets') : t('trip.ticket')}`}
                   </button>
                 </div>
                 {bookingError && (

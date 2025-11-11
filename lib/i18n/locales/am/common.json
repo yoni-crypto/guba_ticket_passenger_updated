@@ -1,0 +1,21 @@
+{
+  "welcome": "እንኳን ደህና መጡ",
+  "loading": "በመጫን ላይ...",
+  "error": "ስህተት",
+  "success": "ተሳክቷል",
+  "cancel": "ሰርዝ",
+  "save": "አስቀምጥ",
+  "edit": "አርትዖት",
+  "delete": "ሰርዝ",
+  "create": "ፍጠር",
+  "update": "አዘምን",
+  "search": "ፍለጋ",
+  "filter": "አጣራ",
+  "actions": "ድርጊቶች",
+  "status": "ሁኔታ",
+  "active": "ንቁ",
+  "inactive": "አልተንቃ",
+  "name": "ስም",
+  "description": "መግለጫ"
+}
+

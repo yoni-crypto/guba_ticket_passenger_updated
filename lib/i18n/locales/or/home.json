@@ -1,0 +1,123 @@
+{
+  "hero": {
+    "title": "Tikkeettii",
+    "titleItalic": "konkolaataa keessan",
+    "subtitle": "booji'aa fi",
+    "subtitleItalic": "Itoophiyaa",
+    "subtitle2": "hunda keessatti",
+    "subtitle2Italic": "nagaan fi salphaan deemi."
+  },
+  "search": {
+    "from": "Irratti",
+    "to": "Garatti",
+    "originPlaceholder": "Magaalaa jalqabaa",
+    "destinationPlaceholder": "Magaalaa deemsiisaa",
+    "departureDate": "Guyyaa ba'uu",
+    "searchButton": "Barbaadi",
+    "loadingCities": "Magaaloonni hojii jira...",
+    "noCitiesFound": "Magaalaa hin argamne"
+  },
+  "destinations": {
+    "badge": "Bakka deemsiisaa beekamoo",
+    "title": "Garatti",
+    "titleItalic": "barbaachisoo",
+    "title2": "magaalota",
+    "subtitle": "deemi",
+    "subtitleItalic": "nagaan Itoophiyaa hunda keessatti.",
+    "bookTo": "Garatti",
+    "dailyRoutes": "booji'aa",
+    "dailyRoutesLabel": "Karaa guyyaa",
+    "addisAbaba": {
+      "title": "Finfinnee",
+      "description": "Magaalaa guddaa Itoophiyaa - karaa magaalaa gurguddoo hundaatti guyyaa guyyaan ba'uudhaan.",
+      "routes": "15+ Karaa Guyyaa"
+    },
+    "bahirDar": {
+      "title": "Bahir Dar",
+      "description": "Magaalaa haaraa haaraa konkolaataa nagaa fi karaa bareedoo qabu.",
+      "routes": "8+ Karaa Guyyaa"
+    },
+    "gondar": {
+      "title": "Gondar",
+      "description": "Magaalaa seenaa qabu konkolaataa haaraa ta'aniin garaa gaarii ta'een argamu.",
+      "routes": "6+ Karaa Guyyaa"
+    },
+    "axum": {
+      "title": "Aksum",
+      "description": "Magaalaa durii konkolaataa amanamaa ta'aniin bakka deemsiisaa gurguddoo wajjin walitti qabame.",
+      "routes": "5+ Karaa Guyyaa"
+    },
+    "hawwasa": {
+      "title": "Hawwasa",
+      "description": "Magaalaa buna guddaa konkolaataa yeroo baay'ee garaa bareedoo ta'een walitti qabame.",
+      "routes": "10+ Karaa Guyyaa"
+    }
+  },
+  "whyChooseUs": {
+    "badge": "Maaliif nu filattu",
+    "title": "Nagaan",
+    "titleItalic": "deemi",
+    "title2": "tajaajila",
+    "title2Italic": "amanamaa",
+    "title3": "ta'een",
+    "title3Italic": "garantiidha.",
+    "description": "Konkolaataa Itoophiyaa hunda keessatti gatii salphaa, yeroo barbaachisoo fi tajaajila gaarii ta'een deemi.",
+    "modernFleet": {
+      "title": "Konkolaataa Haaraa",
+      "description": "Konkolaataa keenya nagaa ta'aniin teessoo nagaa fi qilleensa qabsiisaa qabaniin nagaan deemi."
+    },
+    "safeReliable": {
+      "title": "Nageenyaa fi Amanamaa",
+      "description": "Nageenyi keessan eegumsa keenya guddaadha. Konkolaataa keenya hundi yeroo yeroo mirkaneessuufi hayyoota beekamoo ta'aniin ni darbatama."
+    },
+    "easyBooking": {
+      "title": "Booji'uu Salphaa fi Gargaarsa",
+      "description": "Tikkeettii keessan online waggaa waggaa keessatti kaffaltii nageenyaa qabaniin booji'aa. Gargaarsa 24/7 argadhu."
+    }
+  },
+  "offers": {
+    "title": "Kaffaltii Addaa",
+    "subtitle": "Dursee Booji'aa fi Hir'isi",
+    "description": "Tikkeettii konkolaataa keessan dursee booji'aa fi kaffaltii addaa karaa Itoophiyaa hunda keessatti fayyadami.",
+    "bookNow": "Amma Booji'aa"
+  },
+  "faq": {
+    "title": "Gaaffilee Yeroo Yeroo Gaafataman",
+    "description": "Gaaffilee biraa qabduu? Garee gargaarsa keenya tikkeettii konkolaataa booji'uu keessatti si gargaaruuf jira.",
+    "q1": {
+      "question": "Akkamitti tikkeettii booji'aa?",
+      "answer": "Karaa keessan barbaadi, odeeffannoo teessoo guuti, booji'aa cuqaasi, kaffaltii xumuri, ergasii filannoo teessoo keessan mirkaneessi."
+    },
+    "q2": {
+      "question": "Mallattoo kaffaltii akkamii fudhattu?",
+      "answer": "Amma Chapa kaffaltii fudhanna, kunis CBE, Awash Bank, Abyssinia Bank fi bankoota gurguddoo Itoophiyaa deegarsa."
+    },
+    "q3": {
+      "question": "Kaffaltii dura teessoo filachuu danda'aa?",
+      "answer": "Yeroo booji'attu, teessoo tokko yeroo kaffaltii darbee hanga kaffaltii xumuramutti siif eegama. Kaffaltii xumurtee booda, teessoo filatamuu keessan filachuu danda'attu."
+    }
+  },
+  "cta": {
+    "title": "Ati",
+    "titleItalic": "Konkolaataa",
+    "subtitle": "Kompanii",
+    "subtitleItalic": "ta'aa? Nu Wajjin Hojjechuu Barbaadduu?",
+    "description": "Kompanii konkolaataa ta'aan galmaa'aa imala addaa, yeroo qindeessi, fi teessoo kumaatamaan Itoophiyaa hunda keessatti ga'aa.",
+    "registerNow": "Amma Galmaa'aa"
+  },
+  "footer": {
+    "tagline": "Platfoormii booji'uu konkolaataa amanamaa keessan",
+    "newsletter": "Odeeffannoo",
+    "emailPlaceholder": "Imeelii keessan galchaa",
+    "newsletterDescription": "Kaffaltiiwwan keenya haaraa fi odeeffannoo beekuuf jiraa",
+    "newsletterAgreement": "Galmaa'uun keessan waliin",
+    "privacyPolicy": "Seera Iccitii",
+    "quickLinks": "Kallattiin Salphaa",
+    "home": "Mana",
+    "searchTickets": "Tikkeettii Barbaadi",
+    "myTickets": "Tikkeettii koo",
+    "busCompanyPortal": "Portaalii Kompanii Konkolaataa",
+    "copyright": "Hundumtuu mirga qaba."
+  }
+}
+

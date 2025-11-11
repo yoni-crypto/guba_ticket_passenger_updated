@@ -1,23 +1,25 @@
 'use client'
 import { Bus, Shield, Clock } from 'lucide-react'
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 
 export default function WhyChooseUs() {
+  const { t } = useTranslation('home')
   const features = [
     {
       icon: Bus,
-      title: 'Modern Fleet',
-      description: 'Travel in comfort with our well-maintained buses equipped with comfortable seats and air conditioning.'
+      title: t('whyChooseUs.modernFleet.title'),
+      description: t('whyChooseUs.modernFleet.description')
     },
     {
       icon: Shield,
-      title: 'Safe & Reliable',
-      description: 'Your safety is our priority. All our buses are regularly inspected and driven by experienced, licensed drivers.'
+      title: t('whyChooseUs.safeReliable.title'),
+      description: t('whyChooseUs.safeReliable.description')
     },
     {
       icon: Clock,
-      title: 'Easy Booking & Support',
-      description: 'Book your tickets online in minutes with secure payment. Get 24/7 customer support for any assistance you need.'
+      title: t('whyChooseUs.easyBooking.title'),
+      description: t('whyChooseUs.easyBooking.description')
     }
   ]
 
@@ -27,19 +29,19 @@ export default function WhyChooseUs() {
         <div className="mb-12 flex flex-col justify-between gap-4 lg:mb-20 xl:flex-row xl:items-end">
           <div className="w-full space-y-4">
             <span className="bg-blue/10 text-blue inline-block rounded-full px-3 py-1.5 text-sm lg:px-4 lg:py-2.5 lg:text-lg">
-              Why choose us
+              {t('whyChooseUs.badge')}
             </span>
             <h2 className="w-full max-w-122.5 text-2xl font-medium text-black sm:text-3xl lg:text-4xl xl:text-5xl">
-              Comfortable{' '}
-              <span className="font-playfair italic">travel</span>{' '}
-              with{' '}
-              <span className="font-playfair italic">reliable</span>{' '}
-              service{' '}
-              <span className="font-playfair italic">guaranteed.</span>
+              {t('whyChooseUs.title')}{' '}
+              <span className="font-playfair italic">{t('whyChooseUs.titleItalic')}</span>{' '}
+              {t('whyChooseUs.title2')}{' '}
+              <span className="font-playfair italic">{t('whyChooseUs.title2Italic')}</span>{' '}
+              {t('whyChooseUs.title3')}{' '}
+              <span className="font-playfair italic">{t('whyChooseUs.title3Italic')}</span>
             </h2>
           </div>
           <p className="text-gray w-full max-w-150 lg:text-lg">
-            Experience hassle-free bus travel across Ethiopia with affordable prices, convenient schedules, and excellent customer service.
+            {t('whyChooseUs.description')}
           </p>
         </div>
 

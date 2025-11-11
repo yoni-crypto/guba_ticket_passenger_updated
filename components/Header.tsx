@@ -3,12 +3,15 @@ import { useState, useEffect, useRef } from 'react'
 import { Menu, X, MoveUpRight, User, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { logout, loadFromStorage } from '@/lib/redux/features/authSlice'
 import AuthModal from './AuthModal'
+import { LanguageSwitcher } from './language-switcher'
 import toast from 'react-hot-toast'
 
 export default function Header() {
+  const { t, i18n } = useTranslation(['navbar', 'auth'])
   const dispatch = useAppDispatch()
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -17,6 +20,7 @@ export default function Header() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const isOromo = i18n.language === 'or'
 
   useEffect(() => {
     dispatch(loadFromStorage())
@@ -39,18 +43,18 @@ export default function Header() {
 
   const handleLogout = () => {
     dispatch(logout())
-    toast.success('Logged out successfully')
+    toast.success(t('navbar:loggedOutSuccessfully'))
     setShowUserMenu(false)
   }
 
   const navItems = [
-    { href: '/', label: 'Home', section: 'home' },
-    { href: '/search', label: 'Search', section: 'search' },
-    { href: '/my-tickets', label: 'My Tickets', section: 'tickets' },
-    { href: '#destinations', label: 'Destinations', section: 'destinations' },
-    { href: '#why-choose-us', label: 'Why Choose Us', section: 'why-choose-us' },
-    { href: '#offers', label: 'Offers', section: 'offers' },
-    { href: '#faq', label: 'FAQ', section: 'faq' },
+    { href: '/', label: t('navbar:home'), section: 'home' },
+    { href: '/search', label: t('navbar:search'), section: 'search' },
+    { href: '/my-tickets', label: t('navbar:myTickets'), section: 'tickets' },
+    { href: '#destinations', label: t('navbar:destinations'), section: 'destinations' },
+    { href: '#why-choose-us', label: t('navbar:whyChooseUs'), section: 'why-choose-us' },
+    { href: '#offers', label: t('navbar:offers'), section: 'offers' },
+    { href: '#faq', label: t('navbar:faq'), section: 'faq' },
   ]
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -96,7 +100,9 @@ export default function Header() {
                   <Link 
                     href={item.href} 
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`relative inline-flex items-center gap-2.5 rounded-full px-4 py-2.5 text-base font-medium whitespace-nowrap transition-colors duration-300 ${
+                    className={`relative inline-flex items-center gap-2.5 rounded-full font-medium whitespace-nowrap transition-colors duration-300 ${
+                      isOromo ? 'px-2.5 py-2 text-sm xl:text-sm' : 'px-4 py-2.5 text-base'
+                    } ${
                       isActive ? (isScrolled ? 'bg-white text-black xl:bg-white xl:text-black' : 'text-blue bg-white xl:bg-white xl:text-black') : ''
                     } ${
                       isScrolled 
@@ -113,6 +119,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2.5">
+          <LanguageSwitcher isScrolled={isScrolled} />
           {isAuthenticated && user ? (
             <div className="relative" ref={userMenuRef}>
               <button
@@ -138,7 +145,7 @@ export default function Header() {
                     className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors"
                   >
                     <LogOut className="size-4" />
-                    Logout
+                    {t('navbar:logout')}
                   </button>
                 </div>
               )}
@@ -148,7 +155,7 @@ export default function Header() {
               onClick={() => setShowAuthModal(true)}
               className={`btn flex items-center gap-2 px-4 py-2 rounded-full transition-all ${isScrolled ? 'btn-primary' : 'bg-white/20 text-white hover:bg-white/30'}`}
             >
-              Login
+              {t('navbar:login')}
               <MoveUpRight className="size-4" />
             </button>
           )}

@@ -1,0 +1,21 @@
+{
+  "welcome": "Baga nagaan dhufte",
+  "loading": "Hojii jira...",
+  "error": "Dogoggora",
+  "success": "Milkaa'ee",
+  "cancel": "Haqiisi",
+  "save": "Qabsiisi",
+  "edit": "Gulaali",
+  "delete": "Haqiisi",
+  "create": "Uumi",
+  "update": "Fooyya'i",
+  "search": "Barbaadi",
+  "filter": "Filadhu",
+  "actions": "Hojiiwwan",
+  "status": "Haala",
+  "active": "Hojii jira",
+  "inactive": "Hojii hin qabne",
+  "name": "Maqaa",
+  "description": "Ibsa"
+}
+

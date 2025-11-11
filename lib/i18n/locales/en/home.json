@@ -1,0 +1,122 @@
+{
+  "hero": {
+    "title": "Book your",
+    "titleItalic": "bus ticket",
+    "subtitle": "and travel across",
+    "subtitleItalic": "Ethiopia",
+    "subtitle2": "with",
+    "subtitle2Italic": "comfort and ease."
+  },
+  "search": {
+    "from": "From",
+    "to": "To",
+    "originPlaceholder": "Origin City",
+    "destinationPlaceholder": "Destination City",
+    "departureDate": "Departure Date",
+    "searchButton": "Search",
+    "loadingCities": "Loading cities...",
+    "noCitiesFound": "No cities found"
+  },
+  "destinations": {
+    "badge": "Popular Destinations",
+    "title": "Travel to",
+    "titleItalic": "amazing",
+    "title2": "cities",
+    "subtitle": "across",
+    "subtitleItalic": "Ethiopia with comfort.",
+    "bookTo": "Book to",
+    "dailyRoutes": "Daily Routes",
+    "addisAbaba": {
+      "title": "Addis Ababa",
+      "description": "Ethiopia's bustling capital - gateway to all major cities with daily departures.",
+      "routes": "15+ Daily Routes"
+    },
+    "bahirDar": {
+      "title": "Bahir Dar",
+      "description": "Scenic lakeside city with comfortable bus services and beautiful routes.",
+      "routes": "8+ Daily Routes"
+    },
+    "gondar": {
+      "title": "Gondar",
+      "description": "Historic city accessible via modern buses through stunning highland scenery.",
+      "routes": "6+ Daily Routes"
+    },
+    "axum": {
+      "title": "Axum",
+      "description": "Ancient city connected with reliable bus services to major destinations.",
+      "routes": "5+ Daily Routes"
+    },
+    "hawwasa": {
+      "title": "Hawwasa",
+      "description": "Coffee capital with frequent bus connections through scenic landscapes.",
+      "routes": "10+ Daily Routes"
+    }
+  },
+  "whyChooseUs": {
+    "badge": "Why choose us",
+    "title": "Comfortable",
+    "titleItalic": "travel",
+    "title2": "with",
+    "title2Italic": "reliable",
+    "title3": "service",
+    "title3Italic": "guaranteed.",
+    "description": "Experience hassle-free bus travel across Ethiopia with affordable prices, convenient schedules, and excellent customer service.",
+    "modernFleet": {
+      "title": "Modern Fleet",
+      "description": "Travel in comfort with our well-maintained buses equipped with comfortable seats and air conditioning."
+    },
+    "safeReliable": {
+      "title": "Safe & Reliable",
+      "description": "Your safety is our priority. All our buses are regularly inspected and driven by experienced, licensed drivers."
+    },
+    "easyBooking": {
+      "title": "Easy Booking & Support",
+      "description": "Book your tickets online in minutes with secure payment. Get 24/7 customer support for any assistance you need."
+    }
+  },
+  "offers": {
+    "title": "Special Offer",
+    "subtitle": "Book Early & Save",
+    "description": "Reserve your bus tickets in advance and enjoy exclusive discounts on all routes across Ethiopia.",
+    "bookNow": "Book Now"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Still have questions? Our customer support team is here to help you with your bus ticket booking.",
+    "q1": {
+      "question": "How do I book a ticket?",
+      "answer": "Search for your route, fill in passenger information, click book, complete payment, then confirm your seat selection."
+    },
+    "q2": {
+      "question": "What payment methods do you accept?",
+      "answer": "We currently accept Chapa payment gateway which supports CBE, Awash Bank, Abyssinia Bank, and other major Ethiopian banks."
+    },
+    "q3": {
+      "question": "Can I choose a seat before payment?",
+      "answer": "When you book, one seat will be reserved for you until the payment time expires. After completing payment, you can then choose your preferred seat."
+    }
+  },
+  "cta": {
+    "title": "Are You a",
+    "titleItalic": "Bus Company?",
+    "subtitle": "Want to",
+    "subtitleItalic": "Work With Us?",
+    "description": "Register as a bus company to add trips, manage schedules, and reach thousands of passengers across Ethiopia.",
+    "registerNow": "Register Now"
+  },
+  "footer": {
+    "tagline": "Your trusted bus booking platform",
+    "newsletter": "Newsletter",
+    "emailPlaceholder": "Enter your email",
+    "newsletterDescription": "Stay updated with our latest offers and news",
+    "newsletterAgreement": "By subscribing you agree to with our",
+    "privacyPolicy": "Privacy Policy",
+    "quickLinks": "Quick Links",
+    "home": "Home",
+    "searchTickets": "Search Tickets",
+    "myTickets": "My Tickets",
+    "busCompanyPortal": "Bus Company Portal",
+    "copyright": "All rights reserved."
+  }
+}
+
